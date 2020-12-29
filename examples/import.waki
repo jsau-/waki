@@ -1,0 +1,8 @@
+#import 'namespace.waki';
+#import 'vector3.waki';
+
+importedVector = Vector3();
+importedNamespacedStruct = MyNamespace.NamespacedStruct();
+
+print('Your vector is %struct%', importedVector);
+print('Your namespaced struct is %struct%', importedNamespacedStruct);

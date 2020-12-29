@@ -1,0 +1,8 @@
+sandwiches = 10;
+sausageRolls = 20;
+guests = 15;
+
+snacks = sandwiches + sausageRolls;
+snacksPerGuest = snacks / guests;
+
+print('There are %double% snacks per guest', snacksPerGuest);

@@ -1,0 +1,7 @@
+#import 'vector3.waki';
+
+function<Vector3> makeUnitVector(const int unit) {
+  return Vector3(unit);
+};
+
+print('Your unit vector is %struct%', makeUnitVector(20));

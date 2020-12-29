@@ -1,0 +1,9 @@
+struct Vector3 (const int x, const int y, const int z) {
+  int x = x;
+  int y = y;
+  int z = z;
+};
+
+vector3 = Vector3();
+
+print('Your vector is %struct%', vector3);
