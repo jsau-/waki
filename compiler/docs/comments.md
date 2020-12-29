@@ -14,7 +14,8 @@ of the line.
 ## Multi-line comments
 
 Multi-line comments can be started using `/*`, and must be terminated by a
-matching `*/` (failing to match will result in a compilation error).
+matching `*/` (failing to match will result in a compilation error). Nested
+multi-line comments are not permitted.
 
 ```waki
 /*
