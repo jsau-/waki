@@ -50,7 +50,9 @@ function foo(int bar) returns int {
 
   for (auto const& token: tokens) {
     std::cout
-      << "Token: " << TOKEN_NAMES.at(token.type)
+      << "Token: "
+      << TOKEN_NAMES.at(token.type)
+      << " (" << (int)token.type << ")"
       << " | value '" << token.value
       << "' | line number " << token.lineNumber
       << " | column number " << token.columnNumber

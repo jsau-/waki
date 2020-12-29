@@ -44,6 +44,7 @@ struct VariableDeclarationStatement
           << std::endl
           << "Received unexpected token type of "
           << TOKEN_NAMES.at(type)
+          << " (" << (int)type << ")"
           << "."
           << std::endl;
 
