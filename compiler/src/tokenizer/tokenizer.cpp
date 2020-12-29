@@ -1,4 +1,3 @@
-#include <exception>
 #include <sstream>
 #include "token.h"
 #include "token_patterns.h"
@@ -57,8 +56,8 @@ TokenizerMatch Tokenizer::nextMatch() {
   }
 
   for (
-    auto tokenizerPatternIterator = tokenPatterns.begin();
-    tokenizerPatternIterator != tokenPatterns.end();
+    auto tokenizerPatternIterator = TOKEN_PATTERNS.begin();
+    tokenizerPatternIterator != TOKEN_PATTERNS.end();
     tokenizerPatternIterator++
   ) {
     auto tokenType = tokenizerPatternIterator->first;

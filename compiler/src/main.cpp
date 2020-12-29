@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include "parser/parser.h"
+#include "tokenizer/token_names.h"
 #include "tokenizer/token.h"
 #include "tokenizer/tokenizer.h"
 
@@ -42,18 +44,24 @@ function foo(int bar) returns int {
 }
   )"""";
 
-  Tokenizer tokenizer = Tokenizer(input);
+  auto tokenizer = Tokenizer(input);
 
-  const std::vector<Token> tokens = tokenizer.tokenize();
+  const auto tokens = tokenizer.tokenize();
 
   for (auto const& token: tokens) {
     std::cout
-      << "Token: " << (int)token.type
+      << "Token: " << TOKEN_NAMES.at(token.type)
       << " | value '" << token.value
       << "' | line number " << token.lineNumber
       << " | column number " << token.columnNumber
       << std::endl;
   }
+
+  auto parser = Parser(input, tokens);
+
+  auto ast = parser.parse();
+
+  std::cout << ast;
 
   return 0;
 }

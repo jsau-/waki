@@ -4,6 +4,8 @@
 #include <exception>
 #include <string>
 #include <sstream>
+#include "statement_creation_error.h"
+#include "../tokenizer/token_names.h"
 #include "../tokenizer/token_type.h"
 
 struct VariableDeclarationStatement
@@ -18,7 +20,7 @@ struct VariableDeclarationStatement
   bool boolValue;
   std::string stringValue;
 
-  VariableDeclarationStatement(TokenType type, std::string initialValue, bool isNullable = false, bool isMutable = false) : type(type), isNullable(isNullable), isMutable(isMutable)
+  VariableDeclarationStatement(TokenType type, std::string initialValue = "", bool isNullable = false, bool isMutable = false) : type(type), isNullable(isNullable), isMutable(isMutable)
   {
     switch (type)
     {
@@ -39,11 +41,13 @@ struct VariableDeclarationStatement
 
       errorStream
           << "Failed to instantiate VariableDeclarationStatement."
-          << " Received unexpected token type of "
-          << (int)type
+          << std::endl
+          << "Received unexpected token type of "
+          << TOKEN_NAMES.at(type)
+          << "."
           << std::endl;
 
-      throw std::runtime_error(errorStream.str());
+      throw StatementCreationError(errorStream.str());
     }
   };
 };

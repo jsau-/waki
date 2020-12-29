@@ -10,7 +10,7 @@
  * certain tokens will be omitted from the list if no relevant pattern could be
  * used to match them (eg. END_OF_FILE)
  */
-const std::map<TokenType, std::regex> tokenPatterns = {
+const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
   { TokenType::WHITESPACE, std::regex("\\s+") },
   { TokenType::SINGLE_LINE_COMMENT, std::regex("//.*$") },
   { TokenType::MULTI_LINE_COMMENT, std::regex("/\\*.*\\*/", std::regex::extended) },
