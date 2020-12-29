@@ -3,6 +3,7 @@
 #include "token.h"
 #include "token_patterns.h"
 #include "token_type.h"
+#include "tokenizer_error.h"
 #include "tokenizer.h"
 
 /*
@@ -96,21 +97,7 @@ TokenizerMatch Tokenizer::nextMatch() {
     }
   }
 
-  // TODO: Proper error class/struct
-  auto errorStream = std::ostringstream();
-
-  errorStream
-    << "Failed to tokenize source file."
-    << " Error at line " << std::to_string(this->line)
-    << ", column " << std::to_string(this->column)
-    << "."
-    << std::endl
-    << "Near: '"
-    << this->sourceText.substr(this->index, 10)
-    << "'"
-    << std::endl;
-
-  throw std::runtime_error(errorStream.str());
+  throw TokenizerError(this->sourceText, this->index, this->line, this->column);
 }
 
 void Tokenizer::eatChars(int charsToEat) {
