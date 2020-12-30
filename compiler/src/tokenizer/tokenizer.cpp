@@ -17,25 +17,25 @@ std::vector<Token> Tokenizer::tokenize() {
 
   auto significantLexemes = Lexemes::getInstance().getSignificantToTokenize();
 
-  TokenizerMatch mostRecentMatch;
+  Token latestToken;
 
   do {
-    mostRecentMatch = this->nextMatch();
+    latestToken = this->nextMatch();
 
     auto isTokenExcluded = std::find(std::begin(significantLexemes), std::end(significantLexemes),
-                                     mostRecentMatch.token.type) == std::end(significantLexemes);
+                                     latestToken.type) == std::end(significantLexemes);
 
     if (!isTokenExcluded) {
-      tokens.push_back(mostRecentMatch.token);
+      tokens.push_back(latestToken);
     }
-  } while (mostRecentMatch.token.type != LexemeType::END_OF_FILE);
+  } while (latestToken.type != LexemeType::END_OF_FILE);
 
   return tokens;
 }
 
-TokenizerMatch Tokenizer::nextMatch() {
+Token Tokenizer::nextMatch() {
   if (this->sourceText.length() == 0) {
-    return TokenizerMatch(Token(LexemeType::END_OF_FILE, "", this->line, this->column), 0);
+    return Token(LexemeType::END_OF_FILE, "", this->line, this->column);
   }
 
   auto lexemeMetadata = Lexemes::getInstance().getMetadata();
@@ -68,12 +68,9 @@ TokenizerMatch Tokenizer::nextMatch() {
         tokenType = reservedKeywords.at(tokenValue);
       }
 
-      auto tokenizerMatch = TokenizerMatch(
-        Token(tokenType, tokenValue, this->line, this->column), tokenValue.length());
-
       this->eatChars(tokenValue.length());
 
-      return tokenizerMatch;
+      return Token(tokenType, tokenValue, this->line, this->column);
     }
   }
 

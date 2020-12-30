@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "token.h"
-#include "tokenizer_match.h"
 
 struct Tokenizer {
   Tokenizer(std::string sourceText);
@@ -21,7 +20,7 @@ struct Tokenizer {
   uint64_t line;
   uint64_t column;
 
-  TokenizerMatch nextMatch();
+  Token nextMatch();
   void eatChars(int charsToEat);
 };
 
