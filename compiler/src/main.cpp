@@ -9,17 +9,17 @@
 
 int main() {
   auto input = R""""(
-;;;;fLiteral = 30.0040f;
+float fLiteral = 30.0040f;
 
 iLiteral += 20;
 // Brapadoo! ;;;;;;;;;;;;;;;;;;;
 
-bLiteral = false;
+bool bLiteral = false;
 bLiteralTwo = true;
 
 dLiteral *= -10.0d;
 
-sLiteral = 'Wow. This is a string!';;
+string sLiteral = 'Wow. This is a string!';;
   )"""";
 
   std::cout << "Instantiating tokenizer" << std::endl;

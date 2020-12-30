@@ -5,6 +5,7 @@
 
 #include "../expressions/expression.h"
 #include "../types/assignment_operator.h"
+#include "../types/data_type.h"
 #include "statement.h"
 
 /**
@@ -19,14 +20,16 @@
  * ```
  */
 struct VariableAssignmentStatement : Statement {
+  DataType dataType;
   std::string identifier;
   AssignmentOperator assignmentOperator;
   std::shared_ptr<Expression> expression;
 
-  VariableAssignmentStatement(std::string identifier,
+  VariableAssignmentStatement(DataType dataType, std::string identifier,
                               AssignmentOperator assignmentOperator,
                               std::shared_ptr<Expression> expression)
-      : identifier(identifier),
+      : dataType(dataType),
+        identifier(identifier),
         assignmentOperator(assignmentOperator),
         expression(expression) {}
 

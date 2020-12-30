@@ -182,6 +182,14 @@ std::shared_ptr<Statement> Parser::parseStatement() {
 }
 
 std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
+  auto dataType = DataType::UNKNOWN;
+
+  if (this->checkCurrentTokenType(
+          {{TokenType::SIGNED_INTEGER_32, TokenType::FLOAT, TokenType::DOUBLE,
+            TokenType::BOOLEAN, TokenType::STRING}})) {
+    dataType = (DataType)this->advance().type;
+  }
+
   auto identifier =
       this->assertCurrentTokenTypeAndAdvance(TokenType::IDENTIFIER);
 
@@ -191,27 +199,9 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
        TokenType::ADD_ASSIGN, TokenType::SUBTRACT_ASSIGN,
        TokenType::ASSIGN_EQUALS});
 
-  AssignmentOperator assignmentOperator;
-
-  switch ((int)operatorToken.type) {
-    case (int)AssignmentOperator::ADD_ASSIGN:
-      assignmentOperator = AssignmentOperator::ADD_ASSIGN;
-      break;
-    case (int)AssignmentOperator::ASSIGN_EQUALS:
-      assignmentOperator = AssignmentOperator::ASSIGN_EQUALS;
-      break;
-    case (int)AssignmentOperator::DIVIDE_ASSIGN:
-      assignmentOperator = AssignmentOperator::DIVIDE_ASSIGN;
-      break;
-    case (int)AssignmentOperator::MULTIPLY_ASSIGN:
-      assignmentOperator = AssignmentOperator::MULTIPLY_ASSIGN;
-      break;
-    case (int)AssignmentOperator::SUBTRACT_ASSIGN:
-      assignmentOperator = AssignmentOperator::SUBTRACT_ASSIGN;
-    default:
-      // TODO: Proper error
-      throw std::runtime_error("Unexpected assignment operator");
-  }
+  // TODO: This is probably just mega unsafe.
+  AssignmentOperator assignmentOperator =
+      (AssignmentOperator)operatorToken.type;
 
   /*
    * TODO: Make sure typechecker actually checks this stuff is sensible.
@@ -222,7 +212,7 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   this->assertCurrentTokenTypeAndAdvance(TokenType::END_OF_STATEMENT);
 
   return std::make_shared<VariableAssignmentStatement>(
-      identifier.value, assignmentOperator, expression);
+      dataType, identifier.value, assignmentOperator, expression);
 }
 
 bool Parser::isAtEnd() { return this->index >= this->tokens.size(); }

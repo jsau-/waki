@@ -38,6 +38,29 @@ void WakiEmitter::visitBlockStatement(BlockStatement& node) {
 
 void WakiEmitter::visitVariableAssignmentStatement(
     VariableAssignmentStatement& node) {
+  // TODO: Token definition should probably include this!
+  switch (node.dataType) {
+    case DataType::UNKNOWN:
+      break;
+    case DataType::BOOLEAN:
+      this->sourceStream << "bool ";
+      break;
+    case DataType::DOUBLE:
+      this->sourceStream << "double ";
+      break;
+    case DataType::FLOAT:
+      this->sourceStream << "float ";
+      break;
+    case DataType::SIGNED_INTEGER_32:
+      this->sourceStream << "int ";
+      break;
+    case DataType::STRING:
+      this->sourceStream << "string ";
+      break;
+    default:
+      throw std::runtime_error("Unexpected assignment operator");
+  }
+
   this->sourceStream << node.identifier << " ";
 
   // TODO: Token definition should probably include this!
