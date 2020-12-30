@@ -3,8 +3,8 @@
 
 #include "emitter/waki_emitter.h"
 #include "parser/parser.h"
+#include "tokenizer/lexemes.h"
 #include "tokenizer/token.h"
-#include "tokenizer/token_names.h"
 #include "tokenizer/tokenizer.h"
 
 int main() {
@@ -40,7 +40,8 @@ myOtherBinaryOp = (((10 += 2) && naughtyVar)) || 30;
   std::cout << "---------------------------" << std::endl;
 
   for (auto const &token : tokens) {
-    std::cout << "Token: " << TOKEN_NAMES.at(token.type) << " (" << (int)token.type << ")"
+    std::cout << "Token: " << Lexemes::metadata.at(token.type).displayName << " ("
+              << (int)token.type << ")"
               << " | value '" << token.value << "' | line number " << token.lineNumber
               << " | column number " << token.columnNumber << std::endl;
   }
