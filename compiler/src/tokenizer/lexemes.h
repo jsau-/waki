@@ -18,6 +18,7 @@ struct Lexemes {
   std::set<LexemeType> getSignificantToTokenize() { return this->significantToTokenize; };
   std::set<LexemeType> getDataTypes() { return this->dataTypes; };
   std::set<LexemeType> getBinaryOperators() { return this->binaryOperators; };
+  std::set<LexemeType> getLiterals() { return this->literals; };
   std::set<LexemeType> getUnaryOperators() { return this->unaryOperators; };
   std::set<LexemeType> getAssignmentOperators() { return this->assignmentOperators; };
   std::set<LexemeType> getVariableModifiers() { return this->variableModifiers; };
@@ -45,6 +46,12 @@ protected:
    * largely to determine if we're currently evaluating a binary expression.
    */
   std::set<LexemeType> binaryOperators;
+
+  /**
+   * A set of all literal lexeme types. Used in the parser to determine if the
+   * current token is a literal value.
+   */
+  std::set<LexemeType> literals;
 
   /**
    * A set of all lexeme types that are unary operators. Used in the parser

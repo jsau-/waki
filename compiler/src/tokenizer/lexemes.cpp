@@ -54,22 +54,24 @@ Lexemes::Lexemes() {
      * Data type literal values
      */
 
-    {LexemeType::NULL_LITERAL,
-     LexemeMetadata("null literal", std::regex("null"), "null",
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
+    {LexemeType::NULL_LITERAL, LexemeMetadata("null literal", std::regex("null"), "null",
+                                              LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE |
+                                                LEXEMEFLAG_RESERVED_KEYWORD | LEXEMEFLAG_LITERAL)},
     {LexemeType::FLOAT_LITERAL,
      LexemeMetadata("floating point literal", std::regex("[+-]?([0-9]*[.])?[0-9]+f"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL)},
     {LexemeType::DOUBLE_LITERAL,
      LexemeMetadata("double-precision literal", std::regex("[+-]?([0-9]*[.])?[0-9]+d"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL)},
     {LexemeType::SIGNED_INTEGER_32_LITERAL,
      LexemeMetadata("signed 32-bit integer literal", std::regex("[+-]?\\d+"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-    {LexemeType::BOOLEAN_LITERAL, LexemeMetadata("boolean literal", std::regex("true|false"),
-                                                 tl::nullopt, LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-    {LexemeType::STRING_LITERAL, LexemeMetadata("string literal", std::regex("'([^'\\\\]|\\\\.)*'"),
-                                                tl::nullopt, LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL)},
+    {LexemeType::BOOLEAN_LITERAL,
+     LexemeMetadata("boolean literal", std::regex("true|false"), tl::nullopt,
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL)},
+    {LexemeType::STRING_LITERAL,
+     LexemeMetadata("string literal", std::regex("'([^'\\\\]|\\\\.)*'"), tl::nullopt,
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL)},
 
     /*
      * Keywords
@@ -205,6 +207,7 @@ Lexemes::Lexemes() {
   this->assignmentOperators = std::set<LexemeType>();
   this->binaryOperators = std::set<LexemeType>();
   this->dataTypes = std::set<LexemeType>();
+  this->literals = std::set<LexemeType>();
   this->reservedKeywords = std::set<LexemeType>();
   this->significantToTokenize = std::set<LexemeType>();
   this->unaryOperators = std::set<LexemeType>();
@@ -224,6 +227,10 @@ Lexemes::Lexemes() {
 
     if (lexemeMetadata.isDataType()) {
       this->dataTypes.insert(lexemeType);
+    }
+
+    if (lexemeMetadata.isLiteral()) {
+      this->literals.insert(lexemeType);
     }
 
     if (lexemeMetadata.isReservedKeyword()) {

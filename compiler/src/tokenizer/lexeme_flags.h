@@ -37,4 +37,7 @@
  */
 #define LEXEMEFLAG_RESERVED_KEYWORD 64
 
+// This lexeme represents a literal value of any data type
+#define LEXEMEFLAG_LITERAL 128
+
 #endif

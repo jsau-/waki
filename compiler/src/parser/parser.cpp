@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "../tokenizer/lexemes.h"
 #include "expressions/binary_operator_expression.h"
 #include "expressions/bool_literal_expression.h"
 #include "expressions/double_literal_expression.h"
@@ -14,7 +15,6 @@
 #include "expressions/string_literal_expression.h"
 #include "parser_error.h"
 #include "statements/variable_assignment_statement.h"
-#include "../tokenizer/lexemes.h"
 
 Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
   this->sourceText = sourceText;
@@ -23,8 +23,7 @@ Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
 }
 
 std::shared_ptr<BlockStatement> Parser::parse() {
-  auto rootBlock = std::make_shared<BlockStatement>(
-      std::vector<std::shared_ptr<Statement>>());
+  auto rootBlock = std::make_shared<BlockStatement>(std::vector<std::shared_ptr<Statement>>());
 
   while (!this->isAtEnd()) {
     auto parseResult = this->parseStatement();
@@ -46,13 +45,9 @@ Token Parser::advance() {
   return this->previousToken();
 }
 
-bool Parser::hasPreviousToken() {
-  return this->index > this->tokens.size() && !this->isAtEnd();
-}
+bool Parser::hasPreviousToken() { return this->index > this->tokens.size() && !this->isAtEnd(); }
 
-bool Parser::hasNextToken() {
-  return this->tokens.size() > 0 && this->index < this->tokens.size();
-}
+bool Parser::hasNextToken() { return this->tokens.size() > 0 && this->index < this->tokens.size(); }
 
 Token Parser::assertCurrentTokenType(LexemeType type) {
   if (!this->checkCurrentTokenType(type)) {
@@ -80,13 +75,11 @@ Token Parser::assertCurrentTokenTypeAndAdvance(std::set<LexemeType> types) {
   return this->advance();
 }
 
-bool Parser::checkCurrentTokenType(LexemeType type) {
-  return this->currentToken().type == type;
-}
+bool Parser::checkCurrentTokenType(LexemeType type) { return this->currentToken().type == type; }
 
 bool Parser::checkCurrentTokenType(std::set<LexemeType> types) {
-  return std::find(std::begin(types), std::end(types),
-                   this->currentToken().type) != std::end(types);
+  return std::find(std::begin(types), std::end(types), this->currentToken().type) !=
+         std::end(types);
 }
 
 bool Parser::checkNextTokenType(LexemeType type) {
@@ -102,8 +95,7 @@ bool Parser::checkNextTokenType(std::set<LexemeType> types) {
     return false;
   }
 
-  return std::find(std::begin(types), std::end(types),
-                   this->nextToken().type) != std::end(types);
+  return std::find(std::begin(types), std::end(types), this->nextToken().type) != std::end(types);
 }
 
 Token Parser::previousToken() { return this->tokens[this->index - 1]; }
@@ -120,18 +112,16 @@ std::shared_ptr<Expression> Parser::parseCompoundAssignmentExpression() {
   auto expression = this->parseLogicalOrExpression();
 
   auto validTokens = {
-      LexemeType::MULTIPLY_ASSIGN,
-      LexemeType::DIVIDE_ASSIGN,
-      LexemeType::ADD_ASSIGN,
-      LexemeType::SUBTRACT_ASSIGN,
-      LexemeType::NOT,
+    LexemeType::MULTIPLY_ASSIGN,
+    LexemeType::DIVIDE_ASSIGN,
+    LexemeType::ADD_ASSIGN,
+    LexemeType::SUBTRACT_ASSIGN,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseLogicalOrExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -141,14 +131,13 @@ std::shared_ptr<Expression> Parser::parseLogicalOrExpression() {
   auto expression = this->parseLogicalAndExpression();
 
   auto validTokens = {
-      LexemeType::LOGICAL_OR,
+    LexemeType::LOGICAL_OR,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseLogicalAndExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -162,8 +151,7 @@ std::shared_ptr<Expression> Parser::parseLogicalAndExpression() {
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseBitwiseOrExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -177,8 +165,7 @@ std::shared_ptr<Expression> Parser::parseBitwiseOrExpression() {
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseBitwiseXorExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -192,8 +179,7 @@ std::shared_ptr<Expression> Parser::parseBitwiseXorExpression() {
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseBitwiseAndExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -207,8 +193,7 @@ std::shared_ptr<Expression> Parser::parseBitwiseAndExpression() {
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseEqualityExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -218,15 +203,14 @@ std::shared_ptr<Expression> Parser::parseEqualityExpression() {
   auto expression = this->parseRelationalExpression();
 
   auto validTokens = {
-      LexemeType::EQUALS,
-      LexemeType::NOT_EQUALS,
+    LexemeType::EQUALS,
+    LexemeType::NOT_EQUALS,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseRelationalExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -236,17 +220,16 @@ std::shared_ptr<Expression> Parser::parseRelationalExpression() {
   auto expression = this->parseBitwiseShiftExpression();
 
   auto validTokens = {
-      LexemeType::GREATER_THAN,
-      LexemeType::GREATER_THAN_OR_EQUAL,
-      LexemeType::LESS_THAN,
-      LexemeType::LESS_THAN_OR_EQUAL,
+    LexemeType::GREATER_THAN,
+    LexemeType::GREATER_THAN_OR_EQUAL,
+    LexemeType::LESS_THAN,
+    LexemeType::LESS_THAN_OR_EQUAL,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseBitwiseShiftExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -256,15 +239,14 @@ std::shared_ptr<Expression> Parser::parseBitwiseShiftExpression() {
   auto expression = this->parseAdditiveExpression();
 
   auto validTokens = {
-      LexemeType::BITWISE_SHIFT_LEFT,
-      LexemeType::BITWISE_SHIFT_RIGHT,
+    LexemeType::BITWISE_SHIFT_LEFT,
+    LexemeType::BITWISE_SHIFT_RIGHT,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseAdditiveExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -274,15 +256,14 @@ std::shared_ptr<Expression> Parser::parseAdditiveExpression() {
   auto expression = this->parseMultiplicativeExpression();
 
   auto validTokens = {
-      LexemeType::ADD,
-      LexemeType::SUBTRACT,
+    LexemeType::ADD,
+    LexemeType::SUBTRACT,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parseMultiplicativeExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
@@ -292,21 +273,22 @@ std::shared_ptr<Expression> Parser::parseMultiplicativeExpression() {
   auto expression = this->parsePrimaryExpression();
 
   auto validTokens = {
-      LexemeType::MULTIPLY,
-      LexemeType::DIVIDE,
+    LexemeType::MULTIPLY,
+    LexemeType::DIVIDE,
   };
 
   if (this->checkCurrentTokenType(validTokens)) {
     auto binaryOperator = this->advance().type;
     auto rhs = this->parsePrimaryExpression();
-    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
-                                                            expression, rhs);
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator, expression, rhs);
   }
 
   return expression;
 }
 
 std::shared_ptr<Expression> Parser::parsePrimaryExpression() {
+  auto literals = Lexemes::getInstance().getLiterals();
+
   if (this->checkCurrentTokenType(LexemeType::OPEN_PARENTHESIS)) {
     this->advance();
     auto expressionBody = this->parseExpression();
@@ -320,46 +302,33 @@ std::shared_ptr<Expression> Parser::parsePrimaryExpression() {
     return identifierExpression;
   }
 
-  auto validLiteralTokens = {
-      LexemeType::BOOLEAN_LITERAL,
-      LexemeType::DOUBLE_LITERAL,
-      LexemeType::FLOAT_LITERAL,
-      LexemeType::NULL_LITERAL,
-      LexemeType::SIGNED_INTEGER_32_LITERAL,
-      LexemeType::STRING_LITERAL,
-  };
-
-  Token curToken = this->assertCurrentTokenType(validLiteralTokens);
+  Token curToken = this->assertCurrentTokenType(literals);
 
   std::shared_ptr<Expression> literalExpression;
 
+  // TODO: We'll probably want to rethink the parsing here using `stox`
   switch (curToken.type) {
-    case LexemeType::BOOLEAN_LITERAL:
-      literalExpression =
-          std::make_shared<BoolLiteralExpression>(curToken.value == "true");
-      break;
-    case LexemeType::DOUBLE_LITERAL:
-      literalExpression =
-          std::make_shared<DoubleLiteralExpression>(std::stod(curToken.value));
-      break;
-    case LexemeType::FLOAT_LITERAL:
-      literalExpression =
-          std::make_shared<FloatLiteralExpression>(std::stof(curToken.value));
-      break;
-    case LexemeType::NULL_LITERAL:
-      literalExpression = std::make_shared<NullLiteralExpression>();
-      break;
-    case LexemeType::SIGNED_INTEGER_32_LITERAL:
-      literalExpression = std::make_shared<SignedInt32LiteralExpression>(
-          std::stoi(curToken.value));
-      break;
-    case LexemeType::STRING_LITERAL:
-      literalExpression =
-          std::make_shared<StringLiteralExpression>(curToken.value);
-      break;
-    // Should only be hit in the case we've not implemented a literal
-    default:
-      throw ParserError(curToken, validLiteralTokens);
+  case LexemeType::BOOLEAN_LITERAL:
+    literalExpression = std::make_shared<BoolLiteralExpression>(curToken.value == "true");
+    break;
+  case LexemeType::DOUBLE_LITERAL:
+    literalExpression = std::make_shared<DoubleLiteralExpression>(std::stod(curToken.value));
+    break;
+  case LexemeType::FLOAT_LITERAL:
+    literalExpression = std::make_shared<FloatLiteralExpression>(std::stof(curToken.value));
+    break;
+  case LexemeType::NULL_LITERAL:
+    literalExpression = std::make_shared<NullLiteralExpression>();
+    break;
+  case LexemeType::SIGNED_INTEGER_32_LITERAL:
+    literalExpression = std::make_shared<SignedInt32LiteralExpression>(std::stoi(curToken.value));
+    break;
+  case LexemeType::STRING_LITERAL:
+    literalExpression = std::make_shared<StringLiteralExpression>(curToken.value);
+    break;
+  // Should only be hit in the case we've not implemented a literal
+  default:
+    throw ParserError(curToken, literals);
   }
 
   this->advance();
@@ -386,6 +355,8 @@ std::shared_ptr<Statement> Parser::parseStatement() {
 }
 
 std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
+  auto dataTypes = Lexemes::getInstance().getDataTypes();
+  auto variableModifiers = Lexemes::getInstance().getVariableModifiers();
   auto dataType = LexemeType::UNKNOWN;
   auto isMutable = false;
   auto isNullable = false;
@@ -399,8 +370,7 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
    * Probably a sensible place to emit a warning though, eg. count mutables and
    * nullables, if either >= 1 emit a warning.
    */
-  while (
-      this->checkCurrentTokenType({LexemeType::MUTABLE, LexemeType::NULLABLE})) {
+  while (this->checkCurrentTokenType(variableModifiers)) {
     auto variableModifier = this->advance();
 
     if (variableModifier.type == LexemeType::MUTABLE) {
@@ -412,14 +382,11 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
     }
   }
 
-  if (this->checkCurrentTokenType(
-          {{LexemeType::SIGNED_INTEGER_32, LexemeType::FLOAT, LexemeType::DOUBLE,
-            LexemeType::BOOLEAN, LexemeType::STRING}})) {
+  if (this->checkCurrentTokenType(dataTypes)) {
     dataType = this->advance().type;
   }
 
-  auto identifier =
-      this->assertCurrentTokenTypeAndAdvance(LexemeType::IDENTIFIER);
+  auto identifier = this->assertCurrentTokenTypeAndAdvance(LexemeType::IDENTIFIER);
 
   auto assignOperators = Lexemes::getInstance().getAssignmentOperators();
 
@@ -434,8 +401,7 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   this->assertCurrentTokenTypeAndAdvance(LexemeType::END_OF_STATEMENT);
 
   return std::make_shared<VariableAssignmentStatement>(
-      dataType, identifier.value, operatorToken.type, expression, isMutable,
-      isNullable);
+    dataType, identifier.value, operatorToken.type, expression, isMutable, isNullable);
 }
 
 bool Parser::isAtEnd() { return this->index >= this->tokens.size(); }

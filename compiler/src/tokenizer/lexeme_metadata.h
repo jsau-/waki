@@ -62,6 +62,13 @@ struct LexemeMetadata {
   };
 
   /**
+   * Is this lexeme a literal value?
+   */
+  bool isLiteral() {
+    return (this->flags & LEXEMEFLAG_LITERAL) == LEXEMEFLAG_LITERAL;
+  }
+
+  /**
    * Does this lexeme represent a reserved keyword?
    */
   bool isReservedKeyword() {
