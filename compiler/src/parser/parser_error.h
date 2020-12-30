@@ -23,12 +23,12 @@ struct ParserError : public std::exception {
       expectedTokenList = TOKEN_NAMES.at(expectedTokenTypes[0]);
     } else {
       auto expectedTokenListStream = std::ostringstream();
-      expectedTokenListStream << "one of ";
+      expectedTokenListStream << "one of " << std::endl;
 
       for (auto& expectedTokenType : expectedTokenTypes) {
-        expectedTokenListStream << TOKEN_NAMES.at(expectedTokenType);
+        expectedTokenListStream << " " << TOKEN_NAMES.at(expectedTokenType);
         if (&expectedTokenType != &expectedTokenTypes.back()) {
-          expectedTokenListStream << ", ";
+          expectedTokenListStream << std::endl;
         }
       }
 
@@ -38,9 +38,9 @@ struct ParserError : public std::exception {
     this->errorMsg =
         std::string("Parser error at line ") +
         std::to_string(token.lineNumber) + std::string(", column ") +
-        std::to_string(token.columnNumber) + std::string("\n") +
-        std::string("Expected ") + expectedTokenList + " but received " +
-        TOKEN_NAMES.at(token.type) + std::string("\n") +
+        std::to_string(token.columnNumber) + std::string("\n\n") +
+        std::string("Expected ") + expectedTokenList + std::string("\n\n") +
+        "Received: " + TOKEN_NAMES.at(token.type) + std::string("\n\n") +
         "Near: " + token.value + std::string("\n");
   };
 
