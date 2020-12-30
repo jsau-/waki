@@ -1,7 +1,7 @@
 #include "tokenizer.h"
+#include "lexemes.h"
 #include "lexeme_type.h"
 #include "token.h"
-#include "token_patterns.h"
 #include "tokenizer_error.h"
 #include <regex>
 #include <sstream>
@@ -46,14 +46,18 @@ TokenizerMatch Tokenizer::nextMatch() {
     return TokenizerMatch(Token(LexemeType::END_OF_FILE, "", this->line, this->column), 0);
   }
 
-  for (auto tokenizerPatternIterator = TOKEN_PATTERNS.begin();
-       tokenizerPatternIterator != TOKEN_PATTERNS.end(); tokenizerPatternIterator++) {
+  for (auto tokenizerPatternIterator = Lexemes::metadata.begin();
+       tokenizerPatternIterator != Lexemes::metadata.end(); tokenizerPatternIterator++) {
     auto tokenType = tokenizerPatternIterator->first;
-    auto tokenPattern = tokenizerPatternIterator->second;
+    auto tokenPattern = tokenizerPatternIterator->second.pattern;
 
     std::smatch matches;
 
-    if (std::regex_search(this->sourceText, matches, tokenPattern,
+    if (!tokenPattern.has_value()) {
+      continue;
+    }
+
+    if (std::regex_search(this->sourceText, matches, *tokenPattern,
                           std::regex_constants::match_continuous)) {
       auto tokenizerMatch = TokenizerMatch(
         Token(tokenType, matches[0].str(), this->line, this->column), matches[0].str().length());
