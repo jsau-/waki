@@ -2,7 +2,7 @@
 #define waki_parser_parser
 
 #include <memory>
-#include <vector>
+#include <set>
 
 #include "../tokenizer/token.h"
 #include "expressions/expression.h"
@@ -24,13 +24,13 @@ struct Parser {
   bool hasNextToken();
 
   Token assertCurrentTokenType(LexemeType type);
-  Token assertCurrentTokenType(std::vector<LexemeType> types);
+  Token assertCurrentTokenType(std::set<LexemeType> types);
   Token assertCurrentTokenTypeAndAdvance(LexemeType type);
-  Token assertCurrentTokenTypeAndAdvance(std::vector<LexemeType> types);
+  Token assertCurrentTokenTypeAndAdvance(std::set<LexemeType> types);
   bool checkCurrentTokenType(LexemeType type);
-  bool checkCurrentTokenType(std::vector<LexemeType> types);
+  bool checkCurrentTokenType(std::set<LexemeType> types);
   bool checkNextTokenType(LexemeType type);
-  bool checkNextTokenType(std::vector<LexemeType> types);
+  bool checkNextTokenType(std::set<LexemeType> types);
 
   Token previousToken();
   Token currentToken();

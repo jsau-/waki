@@ -3,8 +3,9 @@
 
 #include <memory>
 
+#include "../../tokenizer/lexeme_type.h"
+#include "../../tokenizer/lexemes.h"
 #include "expression.h"
-#include "../types/binary_operator.h"
 
 /**
  * Statement representing a binary operation, i.e. one with a LHS and RHS
@@ -21,16 +22,22 @@
  * ```
  */
 struct BinaryOperatorExpression : Expression {
-  BinaryOperator binaryOperator;
+  LexemeType binaryOperator;
   std::shared_ptr<Expression> lhs;
   std::shared_ptr<Expression> rhs;
 
-  BinaryOperatorExpression(BinaryOperator binaryOperator,
-                          std::shared_ptr<Expression> lhs,
-                          std::shared_ptr<Expression> rhs)
-      : binaryOperator(binaryOperator), lhs(lhs), rhs(rhs) {}
+  BinaryOperatorExpression(LexemeType binaryOperator, std::shared_ptr<Expression> lhs,
+                           std::shared_ptr<Expression> rhs)
+    : binaryOperator(binaryOperator), lhs(lhs), rhs(rhs) {
+    auto binaryOperators = Lexemes::getInstance().getBinaryOperators();
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+    if (binaryOperators.find(binaryOperator) == binaryOperators.end()) {
+      // TODO: Proper error
+      throw std::runtime_error("Unexpected binary operator.");
+    }
+  }
+
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitBinaryOperatorExpression(*this);
   };
 };

@@ -14,9 +14,6 @@ struct Lexemes {
     return instance;
   }
 
-  Lexemes(Lexemes const &) = delete;
-  void operator=(Lexemes const &) = delete;
-
   std::map<LexemeType, LexemeMetadata> getMetadata() { return this->metadata; };
   std::set<LexemeType> getSignificantToTokenize() { return this->significantToTokenize; };
   std::set<LexemeType> getDataTypes() { return this->dataTypes; };

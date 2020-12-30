@@ -2,9 +2,10 @@
 #define waki_parser_parser_error
 
 #include <exception>
+#include <iterator>
+#include <set>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include "../tokenizer/lexeme_type.h"
 #include "../tokenizer/lexemes.h"
@@ -12,27 +13,27 @@
 
 struct ParserError : public std::exception {
   Token token;
-  std::vector<LexemeType> expectedTokenTypes;
+  std::set<LexemeType> expectedTokenTypes;
   std::string errorMsg;
 
-  ParserError(Token token, std::vector<LexemeType> expectedTokenTypes)
+  ParserError(Token token, std::set<LexemeType> expectedTokenTypes)
     : token(token), expectedTokenTypes(expectedTokenTypes) {
     std::string expectedTokenList;
 
     auto lexemeMetadata = Lexemes::getInstance().getMetadata();
 
     if (expectedTokenTypes.size() == 1) {
-      expectedTokenList = lexemeMetadata.at(expectedTokenTypes[0]).displayName;
+      expectedTokenList = lexemeMetadata.at(*expectedTokenTypes.begin()).displayName;
     } else {
       auto expectedTokenListStream = std::ostringstream();
       expectedTokenListStream << "one of " << std::endl;
 
-      for (auto &expectedTokenType : expectedTokenTypes) {
-        expectedTokenListStream << " " << lexemeMetadata.at(expectedTokenType).displayName;
-        if (&expectedTokenType != &expectedTokenTypes.back()) {
+      for (auto iter = expectedTokenTypes.begin(); iter != expectedTokenTypes.end(); ++iter) {
+        expectedTokenListStream << " " << lexemeMetadata.at(*iter).displayName;
+        if (std::next(iter) != expectedTokenTypes.end()) {
           expectedTokenListStream << std::endl;
         }
-      }
+    }
 
       expectedTokenList = expectedTokenListStream.str();
     }

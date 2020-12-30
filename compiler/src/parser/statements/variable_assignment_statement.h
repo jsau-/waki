@@ -3,9 +3,9 @@
 
 #include <memory>
 
+#include "../../tokenizer/lexeme_type.h"
+#include "../../tokenizer/lexemes.h"
 #include "../expressions/expression.h"
-#include "../types/assignment_operator.h"
-#include "../types/data_type.h"
 #include "statement.h"
 
 /**
@@ -20,9 +20,9 @@
  * ```
  */
 struct VariableAssignmentStatement : Statement {
-  DataType dataType;
+  LexemeType dataType;
   std::string identifier;
-  AssignmentOperator assignmentOperator;
+  LexemeType assignmentOperator;
   std::shared_ptr<Expression> expression;
   bool isMutable;
   bool isNullable;
@@ -34,18 +34,29 @@ struct VariableAssignmentStatement : Statement {
    * a programmer error.
    */
 
-  VariableAssignmentStatement(DataType dataType, std::string identifier,
-                              AssignmentOperator assignmentOperator,
-                              std::shared_ptr<Expression> expression,
+  VariableAssignmentStatement(LexemeType dataType, std::string identifier,
+                              LexemeType assignmentOperator, std::shared_ptr<Expression> expression,
                               bool isMutable = false, bool isNullable = false)
-      : dataType(dataType),
-        identifier(identifier),
-        assignmentOperator(assignmentOperator),
-        expression(expression),
-        isMutable(isMutable),
-        isNullable(isNullable) {}
+    : dataType(dataType), identifier(identifier), assignmentOperator(assignmentOperator),
+      expression(expression), isMutable(isMutable), isNullable(isNullable) {
+    auto lexemes = Lexemes::getInstance();
+    auto assignmentOperators = lexemes.getAssignmentOperators();
+    auto dataTypes = lexemes.getDataTypes();
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+    if (assignmentOperators.find(assignmentOperator) == assignmentOperators.end()) {
+      // TODO: Proper error
+      throw std::runtime_error("Invalid assignment operator provided.");
+    }
+
+    // TODO: Is UNKNOWN how we want to represent this? Maybe we provided
+    // std::optional<LexemeType>?
+    if ((dataTypes.find(dataType) == dataTypes.end()) && (dataType != LexemeType::UNKNOWN)) {
+      // TODO: Proper error
+      throw std::runtime_error("Invalid data type provided.");
+    }
+  }
+
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitVariableAssignmentStatement(*this);
   };
 };
