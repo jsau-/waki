@@ -7,6 +7,86 @@ WakiEmitter::WakiEmitter(std::shared_ptr<BlockStatement> rootNode) {
   rootNode->acceptAstVisitor(*this);
 }
 
+void WakiEmitter::visitBinaryOperatorExpression(
+    BinaryOperatorExpression& node) {
+  this->sourceStream << "(";
+
+  node.lhs->acceptAstVisitor(*this);
+
+  switch (node.binaryOperator) {
+    case BinaryOperator::EQUALS:
+      this->sourceStream << " = ";
+      break;
+    case BinaryOperator::NOT_EQUALS:
+      this->sourceStream << " != ";
+      break;
+    case BinaryOperator::LOGICAL_AND:
+      this->sourceStream << " && ";
+      break;
+    case BinaryOperator::LOGICAL_OR:
+      this->sourceStream << " || ";
+      break;
+    case BinaryOperator::BITWISE_AND:
+      this->sourceStream << " & ";
+      break;
+    case BinaryOperator::BITWISE_OR:
+      this->sourceStream << " | ";
+      break;
+    case BinaryOperator::BITWISE_XOR:
+      this->sourceStream << " ^ ";
+      break;
+    case BinaryOperator::BITWISE_NOT:
+      this->sourceStream << " ~ ";
+      break;
+    case BinaryOperator::BITWISE_SHIFT_LEFT:
+      this->sourceStream << " << ";
+      break;
+    case BinaryOperator::BITWISE_SHIFT_RIGHT:
+      this->sourceStream << " >> ";
+      break;
+    case BinaryOperator::LESS_THAN_OR_EQUAL:
+      this->sourceStream << " <= ";
+      break;
+    case BinaryOperator::GREATER_THAN_OR_EQUAL:
+      this->sourceStream << " > ";
+      break;
+    case BinaryOperator::LESS_THAN:
+      this->sourceStream << " < ";
+      break;
+    case BinaryOperator::GREATER_THAN:
+      this->sourceStream << " > ";
+      break;
+    case BinaryOperator::MULTIPLY_ASSIGN:
+      this->sourceStream << " *= ";
+      break;
+    case BinaryOperator::DIVIDE_ASSIGN:
+      this->sourceStream << " /= ";
+      break;
+    case BinaryOperator::ADD_ASSIGN:
+      this->sourceStream << " += ";
+      break;
+    case BinaryOperator::SUBTRACT_ASSIGN:
+      this->sourceStream << " -= ";
+      break;
+    case BinaryOperator::MULTIPLY:
+      this->sourceStream << " * ";
+      break;
+    case BinaryOperator::DIVIDE:
+      this->sourceStream << " / ";
+      break;
+    case BinaryOperator::ADD:
+      this->sourceStream << " + ";
+      break;
+    case BinaryOperator::SUBTRACT:
+      this->sourceStream << " - ";
+      break;
+  }
+
+  node.rhs->acceptAstVisitor(*this);
+
+  this->sourceStream << ")";
+}
+
 void WakiEmitter::visitBoolLiteralExpression(BoolLiteralExpression& node) {
   this->sourceStream << (node.value ? "true" : "false");
 }
@@ -17,6 +97,10 @@ void WakiEmitter::visitDoubleLiteralExpression(DoubleLiteralExpression& node) {
 
 void WakiEmitter::visitFloatLiteralExpression(FloatLiteralExpression& node) {
   this->sourceStream << std::to_string(node.value) << "f";
+}
+
+void WakiEmitter::visitIdentifierExpression(IdentifierExpression& node) {
+  this->sourceStream << node.identifier;
 }
 
 void WakiEmitter::visitNullLiteralExpression() { this->sourceStream << "null"; }

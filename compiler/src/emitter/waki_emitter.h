@@ -4,9 +4,11 @@
 #include <sstream>
 
 #include "../parser/ast_visitor.h"
+#include "../parser/expressions/binary_operator_expression.h"
 #include "../parser/expressions/bool_literal_expression.h"
 #include "../parser/expressions/double_literal_expression.h"
 #include "../parser/expressions/float_literal_expression.h"
+#include "../parser/expressions/identifier_expression.h"
 #include "../parser/expressions/null_literal_expression.h"
 #include "../parser/expressions/signed_int_32_literal_expression.h"
 #include "../parser/expressions/string_literal_expression.h"
@@ -14,15 +16,19 @@
 #include "../parser/statements/variable_assignment_statement.h"
 
 struct WakiEmitter : AstVisitor {
+  virtual void visitBinaryOperatorExpression(
+      BinaryOperatorExpression& node) override;
   virtual void visitBoolLiteralExpression(BoolLiteralExpression& node) override;
   virtual void visitDoubleLiteralExpression(
       DoubleLiteralExpression& node) override;
   virtual void visitFloatLiteralExpression(
       FloatLiteralExpression& node) override;
+  virtual void visitIdentifierExpression(IdentifierExpression& node) override;
   virtual void visitNullLiteralExpression() override;
   virtual void visitSignedInt32LiteralExpression(
       SignedInt32LiteralExpression& node) override;
-virtual void visitStringLiteralExpression(StringLiteralExpression& node) override;
+  virtual void visitStringLiteralExpression(
+      StringLiteralExpression& node) override;
 
   virtual void visitBlockStatement(BlockStatement& node) override;
   virtual void visitVariableAssignmentStatement(

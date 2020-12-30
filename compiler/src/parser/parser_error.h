@@ -40,8 +40,7 @@ struct ParserError : public std::exception {
         std::to_string(token.lineNumber) + std::string(", column ") +
         std::to_string(token.columnNumber) + std::string("\n\n") +
         std::string("Expected ") + expectedTokenList + std::string("\n\n") +
-        "Received: " + TOKEN_NAMES.at(token.type) + std::string("\n\n") +
-        "Near: " + token.value + std::string("\n");
+        "Received: " + TOKEN_NAMES.at(token.type) + std::string("\n\n");
   };
 
   char const* what() const throw() { return this->errorMsg.c_str(); }

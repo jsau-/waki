@@ -1,11 +1,14 @@
 #include "parser.h"
 
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 
+#include "expressions/binary_operator_expression.h"
 #include "expressions/bool_literal_expression.h"
 #include "expressions/double_literal_expression.h"
 #include "expressions/float_literal_expression.h"
+#include "expressions/identifier_expression.h"
 #include "expressions/null_literal_expression.h"
 #include "expressions/signed_int_32_literal_expression.h"
 #include "expressions/string_literal_expression.h"
@@ -40,6 +43,14 @@ std::shared_ptr<BlockStatement> Parser::parse() {
 Token Parser::advance() {
   this->index++;
   return this->previousToken();
+}
+
+bool Parser::hasPreviousToken() {
+  return this->index > this->tokens.size() && !this->isAtEnd();
+}
+
+bool Parser::hasNextToken() {
+  return this->tokens.size() > 0 && this->index < this->tokens.size();
 }
 
 Token Parser::assertCurrentTokenType(TokenType type) {
@@ -77,95 +88,287 @@ bool Parser::checkCurrentTokenType(std::vector<TokenType> types) {
                    this->currentToken().type) != std::end(types);
 }
 
-Token Parser::previousToken() {
-  // TODO: This is gonna break when we're near SOF.
-  return this->tokens[this->index - 1];
+bool Parser::checkNextTokenType(TokenType type) {
+  if (!this->hasNextToken()) {
+    return false;
+  }
+
+  return this->nextToken().type == type;
 }
 
-Token Parser::currentToken() {
-  // TODO: Handle the case we don't _have_ a currentToken
-  return this->tokens[this->index];
+bool Parser::checkNextTokenType(std::vector<TokenType> types) {
+  if (!this->hasNextToken()) {
+    return false;
+  }
+
+  return std::find(std::begin(types), std::end(types),
+                   this->nextToken().type) != std::end(types);
 }
 
-Token Parser::nextToken() {
-  // TODO: This is gonna break when we're near EOF.
-  return this->tokens[this->index + 1];
-}
+Token Parser::previousToken() { return this->tokens[this->index - 1]; }
+
+Token Parser::currentToken() { return this->tokens[this->index]; }
+
+Token Parser::nextToken() { return this->tokens[this->index + 1]; }
 
 std::shared_ptr<Expression> Parser::parseExpression() {
-  switch (this->currentToken().type) {
-    case TokenType::BOOLEAN_LITERAL:
-      return this->parseBoolLiteralExpression();
-    case TokenType::DOUBLE_LITERAL:
-      return this->parseDoubleLiteralExpression();
-    case TokenType::FLOAT_LITERAL:
-      return this->parseFloatLiteralExpression();
-    case TokenType::NULL_LITERAL:
-      return this->parseNullLiteralExpression();
-    case TokenType::SIGNED_INTEGER_32_LITERAL:
-      return this->parseSignedInt32LiteralExpression();
-    case TokenType::STRING_LITERAL:
-      return this->parseStringLiteralExpression();
-    default:
-      throw ParserError(this->currentToken(),
-                        {
-                            TokenType::BOOLEAN_LITERAL,
-                            TokenType::DOUBLE_LITERAL,
-                            TokenType::FLOAT_LITERAL,
-                            TokenType::NULL_LITERAL,
-                            TokenType::SIGNED_INTEGER_32_LITERAL,
-                            TokenType::STRING_LITERAL,
-                        });
+  return this->parseCompoundAssignmentExpression();
+}
+
+std::shared_ptr<Expression> Parser::parseCompoundAssignmentExpression() {
+  auto expression = this->parseLogicalOrExpression();
+
+  auto validTokens = {
+      TokenType::MULTIPLY_ASSIGN,
+      TokenType::DIVIDE_ASSIGN,
+      TokenType::ADD_ASSIGN,
+      TokenType::SUBTRACT_ASSIGN,
+      TokenType::NOT,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseLogicalOrExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
   }
+
+  return expression;
 }
 
-std::shared_ptr<BoolLiteralExpression> Parser::parseBoolLiteralExpression() {
-  auto boolLiteral =
-      this->assertCurrentTokenTypeAndAdvance(TokenType::BOOLEAN_LITERAL);
-  return std::make_shared<BoolLiteralExpression>(boolLiteral.value == "true");
+std::shared_ptr<Expression> Parser::parseLogicalOrExpression() {
+  auto expression = this->parseLogicalAndExpression();
+
+  auto validTokens = {
+      TokenType::LOGICAL_OR,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseLogicalAndExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
 }
 
-std::shared_ptr<DoubleLiteralExpression>
-Parser::parseDoubleLiteralExpression() {
-  auto doubleLiteral =
-      this->assertCurrentTokenTypeAndAdvance(TokenType::DOUBLE_LITERAL);
-  return std::make_shared<DoubleLiteralExpression>(
-      // TODO: stod probably isn't something we want to _keep_
-      std::stod(doubleLiteral.value));
+std::shared_ptr<Expression> Parser::parseLogicalAndExpression() {
+  auto expression = this->parseBitwiseOrExpression();
+
+  auto validTokens = {TokenType::LOGICAL_AND};
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseBitwiseOrExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
 }
 
-std::shared_ptr<FloatLiteralExpression> Parser::parseFloatLiteralExpression() {
-  auto floatLiteral =
-      this->assertCurrentTokenTypeAndAdvance(TokenType::FLOAT_LITERAL);
-  return std::make_shared<FloatLiteralExpression>(
-      // TODO: stof probably isn't something we want to _keep_
-      std::stof(floatLiteral.value));
+std::shared_ptr<Expression> Parser::parseBitwiseOrExpression() {
+  auto expression = this->parseBitwiseXorExpression();
+
+  auto validTokens = {TokenType::BITWISE_OR};
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseBitwiseXorExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
 }
 
-std::shared_ptr<NullLiteralExpression> Parser::parseNullLiteralExpression() {
-  this->assertCurrentTokenTypeAndAdvance(TokenType::NULL_LITERAL);
-  return std::make_shared<NullLiteralExpression>();
+std::shared_ptr<Expression> Parser::parseBitwiseXorExpression() {
+  auto expression = this->parseBitwiseAndExpression();
+
+  auto validTokens = {TokenType::BITWISE_XOR};
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseBitwiseAndExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
 }
 
-std::shared_ptr<SignedInt32LiteralExpression>
-Parser::parseSignedInt32LiteralExpression() {
-  auto signedInt32Literal = this->assertCurrentTokenTypeAndAdvance(
-      TokenType::SIGNED_INTEGER_32_LITERAL);
-  return std::make_shared<SignedInt32LiteralExpression>(
-      // TODO: stoi probably isn't something we want to _keep_
-      std::stoi(signedInt32Literal.value));
+std::shared_ptr<Expression> Parser::parseBitwiseAndExpression() {
+  auto expression = this->parseEqualityExpression();
+
+  auto validTokens = {TokenType::BITWISE_AND};
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseEqualityExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
 }
 
-std::shared_ptr<StringLiteralExpression>
-Parser::parseStringLiteralExpression() {
-  auto stringLiteral =
-      this->assertCurrentTokenTypeAndAdvance(TokenType::STRING_LITERAL);
-  return std::make_shared<StringLiteralExpression>(stringLiteral.value);
+std::shared_ptr<Expression> Parser::parseEqualityExpression() {
+  auto expression = this->parseRelationalExpression();
+
+  auto validTokens = {
+      TokenType::EQUALS,
+      TokenType::NOT_EQUALS,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseRelationalExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
+}
+
+std::shared_ptr<Expression> Parser::parseRelationalExpression() {
+  auto expression = this->parseBitwiseShiftExpression();
+
+  auto validTokens = {
+      TokenType::GREATER_THAN,
+      TokenType::GREATER_THAN_OR_EQUAL,
+      TokenType::LESS_THAN,
+      TokenType::LESS_THAN_OR_EQUAL,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseBitwiseShiftExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
+}
+
+std::shared_ptr<Expression> Parser::parseBitwiseShiftExpression() {
+  auto expression = this->parseAdditiveExpression();
+
+  auto validTokens = {
+      TokenType::BITWISE_SHIFT_LEFT,
+      TokenType::BITWISE_SHIFT_RIGHT,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseAdditiveExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
+}
+
+std::shared_ptr<Expression> Parser::parseAdditiveExpression() {
+  auto expression = this->parseMultiplicativeExpression();
+
+  auto validTokens = {
+      TokenType::ADD,
+      TokenType::SUBTRACT,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parseMultiplicativeExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
+}
+
+std::shared_ptr<Expression> Parser::parseMultiplicativeExpression() {
+  auto expression = this->parsePrimaryExpression();
+
+  auto validTokens = {
+      TokenType::MULTIPLY,
+      TokenType::DIVIDE,
+  };
+
+  if (this->checkCurrentTokenType(validTokens)) {
+    auto binaryOperator = (BinaryOperator)this->advance().type;
+    auto rhs = this->parsePrimaryExpression();
+    expression = std::make_shared<BinaryOperatorExpression>(binaryOperator,
+                                                            expression, rhs);
+  }
+
+  return expression;
+}
+
+std::shared_ptr<Expression> Parser::parsePrimaryExpression() {
+  if (this->checkCurrentTokenType(TokenType::OPEN_PARENTHESIS)) {
+    this->advance();
+    auto expressionBody = this->parseExpression();
+    this->assertCurrentTokenTypeAndAdvance(TokenType::CLOSE_PARENTHESIS);
+    return expressionBody;
+  }
+
+  if (this->checkCurrentTokenType(TokenType::IDENTIFIER)) {
+    auto identifierExpression = std::make_shared<IdentifierExpression>(this->currentToken().value);
+    this->advance();
+    return identifierExpression;
+  }
+
+  auto validLiteralTokens = {
+      TokenType::BOOLEAN_LITERAL,
+      TokenType::DOUBLE_LITERAL,
+      TokenType::FLOAT_LITERAL,
+      TokenType::NULL_LITERAL,
+      TokenType::SIGNED_INTEGER_32_LITERAL,
+      TokenType::STRING_LITERAL,
+  };
+
+  Token curToken = this->assertCurrentTokenType(validLiteralTokens);
+
+  std::shared_ptr<Expression> literalExpression;
+
+  switch (curToken.type) {
+    case TokenType::BOOLEAN_LITERAL:
+      literalExpression =
+          std::make_shared<BoolLiteralExpression>(curToken.value == "true");
+      break;
+    case TokenType::DOUBLE_LITERAL:
+      literalExpression =
+          std::make_shared<DoubleLiteralExpression>(std::stod(curToken.value));
+      break;
+    case TokenType::FLOAT_LITERAL:
+      literalExpression =
+          std::make_shared<FloatLiteralExpression>(std::stof(curToken.value));
+      break;
+    case TokenType::NULL_LITERAL:
+      literalExpression = std::make_shared<NullLiteralExpression>();
+      break;
+    case TokenType::SIGNED_INTEGER_32_LITERAL:
+      literalExpression = std::make_shared<SignedInt32LiteralExpression>(
+          std::stoi(curToken.value));
+      break;
+    case TokenType::STRING_LITERAL:
+      literalExpression =
+          std::make_shared<StringLiteralExpression>(curToken.value);
+      break;
+    // Should only be hit in the case we've not implemented a literal
+    default:
+      throw ParserError(curToken, validLiteralTokens);
+  }
+
+  this->advance();
+
+  return literalExpression;
 }
 
 std::shared_ptr<Statement> Parser::parseStatement() {
   if (this->isAtEnd()) {
-    // TODO: Should I be using `make_shared<SomeDerviedStatement>(nullptr)`?
+    // TODO: Should we be using `make_shared<SomeDerviedStatement>(nullptr)`?
     return nullptr;
   }
 

@@ -22,6 +22,10 @@ dLiteral *= -10.0d;
 string sLiteral = 'Wow. This is a string!';
 
 nullable naughtyVar = null;
+
+// myBinaryOp = 10 + 20;
+
+myOtherBinaryOp = (((10 += 2) && naughtyVar)) || 30;
   )"""";
 
   std::cout << "Instantiating tokenizer" << std::endl;
