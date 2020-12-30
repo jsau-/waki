@@ -1,5 +1,5 @@
-#ifndef waki_tokenizer_tokentype
-#define waki_tokenizer_tokentype
+#ifndef waki_tokenizer_lexeme_type
+#define waki_tokenizer_lexeme_type
 
 /**
  * Note that the order of declaration here is important, and will affect the
@@ -11,7 +11,7 @@
  * characters as any single-character tokens will need to be defined _before_
  * the single-character tokens.
  */
-enum class TokenType {
+enum class LexemeType {
   /*
    * Syntactically unimportant values
    */

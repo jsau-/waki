@@ -6,16 +6,16 @@
 #include <string>
 #include <vector>
 
+#include "../tokenizer/lexeme_type.h"
 #include "../tokenizer/token.h"
 #include "../tokenizer/token_names.h"
-#include "../tokenizer/token_type.h"
 
 struct ParserError : public std::exception {
   Token token;
-  std::vector<TokenType> expectedTokenTypes;
+  std::vector<LexemeType> expectedTokenTypes;
   std::string errorMsg;
 
-  ParserError(Token token, std::vector<TokenType> expectedTokenTypes)
+  ParserError(Token token, std::vector<LexemeType> expectedTokenTypes)
       : token(token), expectedTokenTypes(expectedTokenTypes) {
     std::string expectedTokenList;
 

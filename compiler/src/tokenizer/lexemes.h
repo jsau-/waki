@@ -7,47 +7,48 @@
 
 #include "lexeme_flags.h"
 #include "lexeme_metadata.h"
-#include "token_type.h"
+#include "lexeme_type.h"
 
-std::map<TokenType, LexemeMetadata> LEXEMES = {
+std::map<LexemeType, LexemeMetadata> LEXEMES = {
   /*
    * Syntactically unimportant values
    */
 
-  {TokenType::UNKNOWN, LexemeMetadata("unknown")},
-  {TokenType::WHITESPACE, LexemeMetadata("whitespace", std::regex("\\s+"))},
-  {TokenType::SINGLE_LINE_COMMENT, LexemeMetadata("single line comment", std::regex("//.*"))},
+  {LexemeType::UNKNOWN, LexemeMetadata("unknown")},
+  {LexemeType::WHITESPACE, LexemeMetadata("whitespace", std::regex("\\s+"))},
+  {LexemeType::SINGLE_LINE_COMMENT, LexemeMetadata("single line comment", std::regex("//.*"))},
 
   /*
    * Data types
    */
 
-  {TokenType::SIGNED_INTEGER_32,
+  {LexemeType::SIGNED_INTEGER_32,
    LexemeMetadata("signed 32-bit integer variable", std::regex("int"), tl::nullopt,
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                     LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::FLOAT, LexemeMetadata("floating point variable", std::regex("float"), tl::nullopt,
-                                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                                      LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::DOUBLE, LexemeMetadata("double-precision variable", std::regex("double"), tl::nullopt,
+  {LexemeType::FLOAT, LexemeMetadata("floating point variable", std::regex("float"), tl::nullopt,
                                      LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                                        LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::BOOLEAN, LexemeMetadata("boolean variable", std::regex("bool"), tl::nullopt,
+  {LexemeType::DOUBLE,
+   LexemeMetadata("double-precision variable", std::regex("double"), tl::nullopt,
+                  LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
+                    LEXEMEFLAG_RESERVED_KEYWORD)},
+  {LexemeType::BOOLEAN, LexemeMetadata("boolean variable", std::regex("bool"), tl::nullopt,
+                                       LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
+                                         LEXEMEFLAG_RESERVED_KEYWORD)},
+  {LexemeType::STRING, LexemeMetadata("string variable", std::regex("string"), tl::nullopt,
                                       LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                                         LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::STRING, LexemeMetadata("string variable", std::regex("string"), tl::nullopt,
-                                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                                       LEXEMEFLAG_RESERVED_KEYWORD)},
 
   /*
    * Data type modifiers
    */
 
-  {TokenType::MUTABLE,
+  {LexemeType::MUTABLE,
    LexemeMetadata("mutable modifier", std::regex("mutable"), "mutable",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_VARIABLE_MODIFIER |
                     LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::NULLABLE,
+  {LexemeType::NULLABLE,
    LexemeMetadata("nullable modifier", std::regex("nullable"), "nullable",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_VARIABLE_MODIFIER |
                     LEXEMEFLAG_RESERVED_KEYWORD)},
@@ -56,40 +57,40 @@ std::map<TokenType, LexemeMetadata> LEXEMES = {
    * Data type literal values
    */
 
-  {TokenType::NULL_LITERAL,
+  {LexemeType::NULL_LITERAL,
    LexemeMetadata("null literal", std::regex("null"), "null",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::FLOAT_LITERAL,
+  {LexemeType::FLOAT_LITERAL,
    LexemeMetadata("floating point literal", std::regex("[+-]?([0-9]*[.])?[0-9]+f"), tl::nullopt,
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::DOUBLE_LITERAL,
+  {LexemeType::DOUBLE_LITERAL,
    LexemeMetadata("double-precision literal", std::regex("[+-]?([0-9]*[.])?[0-9]+d"), tl::nullopt,
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::SIGNED_INTEGER_32_LITERAL,
+  {LexemeType::SIGNED_INTEGER_32_LITERAL,
    LexemeMetadata("signed 32-bit integer literal", std::regex("[+-]?\\d+"), tl::nullopt,
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::BOOLEAN_LITERAL, LexemeMetadata("boolean literal", std::regex("true|false"),
+  {LexemeType::BOOLEAN_LITERAL, LexemeMetadata("boolean literal", std::regex("true|false"),
+                                               tl::nullopt, LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+  {LexemeType::STRING_LITERAL, LexemeMetadata("string literal", std::regex("'([^'\\\\]|\\\\.)*'"),
                                               tl::nullopt, LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::STRING_LITERAL, LexemeMetadata("string literal", std::regex("'([^'\\\\]|\\\\.)*'"),
-                                             tl::nullopt, LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
 
   /*
    * Keywords
    */
 
-  {TokenType::FUNCTION,
+  {LexemeType::FUNCTION,
    LexemeMetadata("function", std::regex("function"), "function",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::FUNCTION_RETURNS,
+  {LexemeType::FUNCTION_RETURNS,
    LexemeMetadata("returns", std::regex("returns"), "returns",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::RETURN,
+  {LexemeType::RETURN,
    LexemeMetadata("return", std::regex("return"), "return",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::NAMESPACE,
+  {LexemeType::NAMESPACE,
    LexemeMetadata("namespace", std::regex("namespace"), "namespace",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
-  {TokenType::IMPORT,
+  {LexemeType::IMPORT,
    LexemeMetadata("import", std::regex("import"), "import",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
 
@@ -97,87 +98,88 @@ std::map<TokenType, LexemeMetadata> LEXEMES = {
    * Operators
    */
 
-  {TokenType::EQUALS,
+  {LexemeType::EQUALS,
    LexemeMetadata("equality", std::regex("=="),
                   "==", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::NOT_EQUALS,
+  {LexemeType::NOT_EQUALS,
    LexemeMetadata("inequality", std::regex("!="),
                   "!=", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::LOGICAL_AND,
+  {LexemeType::LOGICAL_AND,
    LexemeMetadata("logical and", std::regex("&&"), "&&",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::LOGICAL_OR,
+  {LexemeType::LOGICAL_OR,
    LexemeMetadata("logical or", std::regex("\\|\\|"), "||",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::BITWISE_AND,
+  {LexemeType::BITWISE_AND,
    LexemeMetadata("bitwise and", std::regex("&"), "&",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::BITWISE_OR,
+  {LexemeType::BITWISE_OR,
    LexemeMetadata("bitwise or", std::regex("\\|"), "|",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::BITWISE_XOR,
+  {LexemeType::BITWISE_XOR,
    LexemeMetadata("bitwise xor", std::regex("\\^"), "^",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::BITWISE_SHIFT_LEFT,
+  {LexemeType::BITWISE_SHIFT_LEFT,
    LexemeMetadata("bitwise shift left", std::regex("<<"), "<<",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::BITWISE_SHIFT_RIGHT,
+  {LexemeType::BITWISE_SHIFT_RIGHT,
    LexemeMetadata("bitwise shift right", std::regex(">>"), ">>",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::LESS_THAN_OR_EQUAL,
+  {LexemeType::LESS_THAN_OR_EQUAL,
    LexemeMetadata("less than or equal", std::regex("<="),
                   "<=", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::GREATER_THAN_OR_EQUAL,
+  {LexemeType::GREATER_THAN_OR_EQUAL,
    LexemeMetadata("greater than or equal", std::regex(">="),
                   ">=", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::LESS_THAN,
+  {LexemeType::LESS_THAN,
    LexemeMetadata("less than", std::regex("<"), "<",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::GREATER_THAN,
+  {LexemeType::GREATER_THAN,
    LexemeMetadata("greater than", std::regex(">"), ">",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::NULL_COALESCE,
+  {LexemeType::NULL_COALESCE,
    LexemeMetadata("null coalesce", std::regex("\\?\\?"), "??",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},
-  {TokenType::TERNARY,
+  {LexemeType::TERNARY,
    LexemeMetadata("ternary", std::regex("\\?"), "?",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::TERNARY_FALLBACK,
+  {LexemeType::TERNARY_FALLBACK,
    LexemeMetadata("ternary fallback", std::regex(":"), ":",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::MULTIPLY_ASSIGN,
+  {LexemeType::MULTIPLY_ASSIGN,
    LexemeMetadata("multiplication assign", std::regex("\\*="), "*=",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR |
                     LEXEMEFLAG_ASSIGNMENT_OPERATOR)},
-  {TokenType::DIVIDE_ASSIGN,
+  {LexemeType::DIVIDE_ASSIGN,
    LexemeMetadata("divide assign", std::regex("\\/="), "/=",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR |
                     LEXEMEFLAG_ASSIGNMENT_OPERATOR)},
-  {TokenType::ADD_ASSIGN,
+  {LexemeType::ADD_ASSIGN,
    LexemeMetadata("addition assign", std::regex("\\+="), "+=",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR |
                     LEXEMEFLAG_ASSIGNMENT_OPERATOR)},
-  {TokenType::SUBTRACT_ASSIGN,
+  {LexemeType::SUBTRACT_ASSIGN,
    LexemeMetadata("subtraction assign", std::regex("-="), "-=",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR |
                     LEXEMEFLAG_ASSIGNMENT_OPERATOR)},
-  {TokenType::ASSIGN_EQUALS,
+  {LexemeType::ASSIGN_EQUALS,
    LexemeMetadata("equals", std::regex("="), "=",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_ASSIGNMENT_OPERATOR)},
-  {TokenType::MULTIPLY,
+  {LexemeType::MULTIPLY,
    LexemeMetadata("multiply", std::regex("\\*"), "*",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::DIVIDE,
+  {LexemeType::DIVIDE,
    LexemeMetadata("divide", std::regex("\\/"), "/",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::ADD, LexemeMetadata("add", std::regex("\\+"), "+",
-                                  LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::SUBTRACT,
+  {LexemeType::ADD,
+   LexemeMetadata("add", std::regex("\\+"), "+",
+                  LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
+  {LexemeType::SUBTRACT,
    LexemeMetadata("subtract", std::regex("-"), "-",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-  {TokenType::NOT, LexemeMetadata("logical not", std::regex("!"), "!",
-                                  LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},
-  {TokenType::BITWISE_NOT,
+  {LexemeType::NOT, LexemeMetadata("logical not", std::regex("!"), "!",
+                                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},
+  {LexemeType::BITWISE_NOT,
    LexemeMetadata("bitwise not", std::regex("~"), "~",
                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},
 
@@ -185,20 +187,20 @@ std::map<TokenType, LexemeMetadata> LEXEMES = {
    * Syntax symbols
    */
 
-  {TokenType::OPEN_BRACE,
+  {LexemeType::OPEN_BRACE,
    LexemeMetadata("open brace", std::regex("\\{"), "{", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::CLOSE_BRACE,
+  {LexemeType::CLOSE_BRACE,
    LexemeMetadata("open brace", std::regex("\\}"), "}", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::OPEN_PARENTHESIS,
+  {LexemeType::OPEN_PARENTHESIS,
    LexemeMetadata("open parenthesis", std::regex("\\("), "(", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::CLOSE_PARENTHESIS,
+  {LexemeType::CLOSE_PARENTHESIS,
    LexemeMetadata("close brace", std::regex("\\)"), ")", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::END_OF_STATEMENT,
+  {LexemeType::END_OF_STATEMENT,
    LexemeMetadata("end of statement", std::regex(";"), ";", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-  {TokenType::LIST_DELIMITER,
+  {LexemeType::LIST_DELIMITER,
    LexemeMetadata("list delimiter", std::regex("\\,"), ",", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
 
-  {TokenType::IDENTIFIER, LexemeMetadata("identifier", std::regex("[A-Za-z_]+"), tl::nullopt,
-                                         LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+  {LexemeType::IDENTIFIER, LexemeMetadata("identifier", std::regex("[A-Za-z_]+"), tl::nullopt,
+                                          LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
 };
 #endif

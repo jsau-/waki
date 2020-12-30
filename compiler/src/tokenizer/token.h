@@ -3,22 +3,18 @@
 
 #include <string>
 
-#include "token_type.h"
+#include "lexeme_type.h"
 
 struct Token {
-  TokenType type;
+  LexemeType type;
   std::string value;
   uint64_t lineNumber;
   uint64_t columnNumber;
 
-  Token(TokenType type, std::string value, uint64_t lineNumber = 0,
-        uint64_t columnNumber = 0)
-      : type(type),
-        value(value),
-        lineNumber(lineNumber),
-        columnNumber(columnNumber) {}
+  Token(LexemeType type, std::string value, uint64_t lineNumber = 0, uint64_t columnNumber = 0)
+    : type(type), value(value), lineNumber(lineNumber), columnNumber(columnNumber) {}
 
-  Token() : Token(TokenType::UNKNOWN, "", 0, 0) {}
+  Token() : Token(LexemeType::UNKNOWN, "", 0, 0) {}
 };
 
 #endif

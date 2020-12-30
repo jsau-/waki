@@ -23,14 +23,14 @@ struct Parser {
   bool hasPreviousToken();
   bool hasNextToken();
 
-  Token assertCurrentTokenType(TokenType type);
-  Token assertCurrentTokenType(std::vector<TokenType> types);
-  Token assertCurrentTokenTypeAndAdvance(TokenType type);
-  Token assertCurrentTokenTypeAndAdvance(std::vector<TokenType> types);
-  bool checkCurrentTokenType(TokenType type);
-  bool checkCurrentTokenType(std::vector<TokenType> types);
-  bool checkNextTokenType(TokenType type);
-  bool checkNextTokenType(std::vector<TokenType> types);
+  Token assertCurrentTokenType(LexemeType type);
+  Token assertCurrentTokenType(std::vector<LexemeType> types);
+  Token assertCurrentTokenTypeAndAdvance(LexemeType type);
+  Token assertCurrentTokenTypeAndAdvance(std::vector<LexemeType> types);
+  bool checkCurrentTokenType(LexemeType type);
+  bool checkCurrentTokenType(std::vector<LexemeType> types);
+  bool checkNextTokenType(LexemeType type);
+  bool checkNextTokenType(std::vector<LexemeType> types);
 
   Token previousToken();
   Token currentToken();

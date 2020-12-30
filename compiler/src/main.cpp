@@ -39,12 +39,10 @@ myOtherBinaryOp = (((10 += 2) && naughtyVar)) || 30;
   std::cout << "Tokens:" << std::endl;
   std::cout << "---------------------------" << std::endl;
 
-  for (auto const& token : tokens) {
-    std::cout << "Token: " << TOKEN_NAMES.at(token.type) << " ("
-              << (int)token.type << ")"
-              << " | value '" << token.value << "' | line number "
-              << token.lineNumber << " | column number " << token.columnNumber
-              << std::endl;
+  for (auto const &token : tokens) {
+    std::cout << "Token: " << TOKEN_NAMES.at(token.type) << " (" << (int)token.type << ")"
+              << " | value '" << token.value << "' | line number " << token.lineNumber
+              << " | column number " << token.columnNumber << std::endl;
   }
   std::cout << "---------------------------" << std::endl << std::endl;
 
