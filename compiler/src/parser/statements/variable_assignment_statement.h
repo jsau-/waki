@@ -48,7 +48,7 @@ struct VariableAssignmentStatement : Statement {
       throw std::runtime_error("Invalid assignment operator provided.");
     }
 
-    // TODO: Is UNKNOWN how we want to represent this? Maybe we provided
+    // TODO: Is UNKNOWN how we want to represent this? Maybe we should provide
     // std::optional<LexemeType>?
     if ((dataTypes.find(dataType) == dataTypes.end()) && (dataType != LexemeType::UNKNOWN)) {
       // TODO: Proper error

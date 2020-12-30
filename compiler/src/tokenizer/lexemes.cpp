@@ -256,3 +256,13 @@ Lexemes::Lexemes() {
     }
   }
 }
+
+std::map<LexemeType, LexemeMetadata> Lexemes::getMetadata() { return this->metadata; };
+std::set<LexemeType> Lexemes::getSignificantToTokenize() { return this->significantToTokenize; };
+std::set<LexemeType> Lexemes::getDataTypes() { return this->dataTypes; };
+std::set<LexemeType> Lexemes::getBinaryOperators() { return this->binaryOperators; };
+std::set<LexemeType> Lexemes::getLiterals() { return this->literals; };
+std::set<LexemeType> Lexemes::getUnaryOperators() { return this->unaryOperators; };
+std::set<LexemeType> Lexemes::getAssignmentOperators() { return this->assignmentOperators; };
+std::set<LexemeType> Lexemes::getVariableModifiers() { return this->variableModifiers; };
+std::map<std::string, LexemeType> Lexemes::getReservedKeywords() { return this->reservedKeywords; };

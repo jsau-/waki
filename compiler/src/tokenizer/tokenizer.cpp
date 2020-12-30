@@ -77,8 +77,8 @@ Token Tokenizer::nextMatch() {
   throw TokenizerError(this->sourceText, this->line, this->column);
 }
 
-void Tokenizer::eatChars(int charsToEat) {
-  for (int i = 0; i < charsToEat; i++) {
+void Tokenizer::eatChars(uint64_t charsToEat) {
+  for (uint64_t i = 0; i < charsToEat; i++) {
     if (this->sourceText[i] == '\n') {
       this->line++;
       this->column = 0;

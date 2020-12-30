@@ -5,6 +5,12 @@
 
 #include "lexeme_type.h"
 
+/**
+ * Struct describing an instance of a lexeme matched by the tokenizer. As well
+ * as the token's type and value, we also track any useful metadata that will
+ * be useful later for raising errors to the programmer, like where in the
+ * source file this token occurred.
+ */
 struct Token {
   LexemeType type;
   std::string value;

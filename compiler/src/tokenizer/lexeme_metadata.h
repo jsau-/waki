@@ -67,7 +67,11 @@ struct LexemeMetadata {
   bool isLiteral() { return (this->flags & LEXEMEFLAG_LITERAL) == LEXEMEFLAG_LITERAL; }
 
   /**
-   * Does this lexeme represent a reserved keyword?
+   * Does this lexeme represent a reserved keyword that we want to restrict
+   * other lexemes (or identifiers in source code) from being able to use?
+   *
+   * Of major use in the tokenizer to handle the case where our identifier
+   * lexeme overzealously tries to match one of our internal keywords.
    */
   bool isReservedKeyword() {
     return (this->flags & LEXEMEFLAG_RESERVED_KEYWORD) == LEXEMEFLAG_RESERVED_KEYWORD;

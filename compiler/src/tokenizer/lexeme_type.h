@@ -2,14 +2,17 @@
 #define waki_tokenizer_lexeme_type
 
 /**
- * Note that the order of declaration here is important, and will affect the
- * precedence for token generation in the case two valid options are presented.
- * eg. If we defined integer literals before float literals, then `1.0f` might
- * be parsed as tokens `INT[1]` and `FLOAT[.0f]`.
+ * NB: The enum values here are used elsewhere in the program as keys, eg. in
+ * `std::map` which has a defined iteration order (eg. keys ascending). As a
+ * result, it's important to place lexeme definitions in the order we'd want
+ * them to be parsed.
  *
- * Additionally, this means any multi-character tokens which contain the same
- * characters as any single-character tokens will need to be defined _before_
- * the single-character tokens.
+ * That means any lexemes whose code representations include another lexeme's
+ * code representation *MUST* be declared first.
+ *
+ * eg. Lexeme with code representation `foobar` must appear before the lexeme
+ * with code representation `foo`, otherwise we'll match `foo` and never match
+ * `foobar`.
  */
 enum class LexemeType {
   /*
@@ -20,7 +23,7 @@ enum class LexemeType {
   WHITESPACE,
   SINGLE_LINE_COMMENT,
   END_OF_FILE,
-  
+
   IDENTIFIER,
 
   /*

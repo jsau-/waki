@@ -2,6 +2,14 @@
 #define waki_tokenizer_lexeme_flags
 
 /*
+ * A set of flags describing a given lexeme. Allows us to build collections of
+ * different groups, like the set of all lexemes which are reserved keywords, or
+ * the set of all lexemes which are data types.
+ *
+ * This kind of information is super useful when parsing tokens, 'cos it saves
+ * us having to write out all possible lexemes that could match in a given
+ * context.
+ *
  * NB: The declarations made here are used as bitmask values in lexeme_metadata,
  * and lexemes. Make sure to keep all values strict powers of two, or this won't
  * work!

@@ -14,26 +14,71 @@ struct Parser {
 
   std::shared_ptr<BlockStatement> parse();
 
- private:
+private:
   std::string sourceText;
   std::vector<Token> tokens;
   size_t index;
 
+  /*
+   * Increment our index tracking our position in the list of tokens, and return
+   * the token we were previously indexed on.
+   */
   Token advance();
+
+  // Do we have a previous token to inspect?
   bool hasPreviousToken();
+
+  // Do we have a next token to inspect?
   bool hasNextToken();
 
+  // Throw an error if the current token is not of given type.
   Token assertCurrentTokenType(LexemeType type);
+
+  // Throw an error if the current token is not one of a set of types.
   Token assertCurrentTokenType(std::set<LexemeType> types);
+
+  /*
+   * Throw an error if the current token is not of given type; otherwise
+   * advance to the next token, returning the token we were previously indexed
+   * on.
+   */
   Token assertCurrentTokenTypeAndAdvance(LexemeType type);
+
+  /*
+   * Throw an error if the current token is not one of a set of types; otherwise
+   * advance to the next token, returning the token we were previously indexed
+   * on.
+   */
   Token assertCurrentTokenTypeAndAdvance(std::set<LexemeType> types);
+
+  // Is the token we're currently indexed on of given type?
   bool checkCurrentTokenType(LexemeType type);
+
+  // Is the token we're curently indexed on one of a set of types?
   bool checkCurrentTokenType(std::set<LexemeType> types);
+
+  // Is the token immediately after the one we're indexed on of given type?
   bool checkNextTokenType(LexemeType type);
+
+  /*
+   * Is the token immediate after the one we're indexed on one of a set of
+   * types?
+   */
   bool checkNextTokenType(std::set<LexemeType> types);
 
+  /*
+   * Get the previous token to the one we're currently indexed on.
+   * TODO: Return tl::optional<Token>
+   */
   Token previousToken();
+
+  // Get the token we're currently indexed on.
   Token currentToken();
+
+  /*
+   * Get the next token immediately following the one we're indexed on.
+   * TODO: Return tl::optional<Token>
+   */
   Token nextToken();
 
   /*

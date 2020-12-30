@@ -15,15 +15,15 @@ struct Lexemes {
     return instance;
   }
 
-  std::map<LexemeType, LexemeMetadata> getMetadata() { return this->metadata; };
-  std::set<LexemeType> getSignificantToTokenize() { return this->significantToTokenize; };
-  std::set<LexemeType> getDataTypes() { return this->dataTypes; };
-  std::set<LexemeType> getBinaryOperators() { return this->binaryOperators; };
-  std::set<LexemeType> getLiterals() { return this->literals; };
-  std::set<LexemeType> getUnaryOperators() { return this->unaryOperators; };
-  std::set<LexemeType> getAssignmentOperators() { return this->assignmentOperators; };
-  std::set<LexemeType> getVariableModifiers() { return this->variableModifiers; };
-  std::map<std::string, LexemeType> getReservedKeywords() { return this->reservedKeywords; };
+  std::map<LexemeType, LexemeMetadata> getMetadata();
+  std::set<LexemeType> getSignificantToTokenize();
+  std::set<LexemeType> getDataTypes();
+  std::set<LexemeType> getBinaryOperators();
+  std::set<LexemeType> getLiterals();
+  std::set<LexemeType> getUnaryOperators();
+  std::set<LexemeType> getAssignmentOperators();
+  std::set<LexemeType> getVariableModifiers();
+  std::map<std::string, LexemeType> getReservedKeywords();
 
 protected:
   // A map between all known lexeme types and metadata describing them
