@@ -8,7 +8,6 @@
 const std::map<TokenType, std::string> TOKEN_NAMES = {
   { TokenType::WHITESPACE, "Whitespace" },
   { TokenType::SINGLE_LINE_COMMENT, "Single-line comment" },
-  { TokenType::MULTI_LINE_COMMENT, "Multi-line comment" },
 
   { TokenType::SIGNED_INTEGER_32, "Signed 32-bit integer" },
   { TokenType::FLOAT, "Float" },

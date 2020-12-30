@@ -34,10 +34,6 @@ myNullableInt /= 30;
 
 myDerivedIntFromNull = myNullableInt ?? 50;
 
-/**
- * Cool.
- * myOtherInt = 20;
- */
 baz = 50;
 
 function foo(int bar) returns int {

@@ -11,9 +11,8 @@
  * used to match them (eg. END_OF_FILE)
  */
 const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
-  { TokenType::WHITESPACE, std::regex("[\\s\\r\\R\\n]+") },
+  { TokenType::WHITESPACE, std::regex("\\s+") },
   { TokenType::SINGLE_LINE_COMMENT, std::regex("//.*") },
-  { TokenType::MULTI_LINE_COMMENT, std::regex("/\\*.*\\*/", std::regex::extended) },
 
   { TokenType::SIGNED_INTEGER_32, std::regex("int" )},
   { TokenType::FLOAT, std::regex("float" )},

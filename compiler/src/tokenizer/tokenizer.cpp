@@ -14,7 +14,6 @@ const TokenType excludedTokenTypes[] = {
   TokenType::WHITESPACE,
   TokenType::END_OF_FILE,
   TokenType::SINGLE_LINE_COMMENT,
-  TokenType::MULTI_LINE_COMMENT,
 };
 
 Tokenizer::Tokenizer(std::string sourceText) {
@@ -65,7 +64,12 @@ TokenizerMatch Tokenizer::nextMatch() {
 
     std::smatch matches;
 
-    if (std::regex_search(this->sourceText, matches, tokenPattern, std::regex_constants::match_continuous)) {
+    if (std::regex_search(
+      this->sourceText,
+      matches,
+      tokenPattern,
+      std::regex_constants::match_continuous
+    )) {
       auto tokenizerMatch = TokenizerMatch(
         Token(tokenType, matches[0].str(), this->line, this->column),
         matches[0].str().length()
