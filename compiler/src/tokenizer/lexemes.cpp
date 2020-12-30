@@ -15,25 +15,27 @@ Lexemes::Lexemes() {
     {LexemeType::WHITESPACE, LexemeMetadata("whitespace", std::regex("\\s+"))},
     {LexemeType::SINGLE_LINE_COMMENT, LexemeMetadata("single line comment", std::regex("//.*"))},
 
+    {LexemeType::IDENTIFIER, LexemeMetadata("identifier", std::regex("[A-Za-z_]+"), tl::nullopt,
+                                            LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+
     /*
      * Data types
      */
 
     {LexemeType::SIGNED_INTEGER_32,
-     LexemeMetadata("signed 32-bit integer variable", std::regex("int"), tl::nullopt,
+     LexemeMetadata("signed 32-bit integer variable", std::regex("int"), "int",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                       LEXEMEFLAG_RESERVED_KEYWORD)},
-    {LexemeType::FLOAT, LexemeMetadata("floating point variable", std::regex("float"), tl::nullopt,
+    {LexemeType::FLOAT, LexemeMetadata("floating point variable", std::regex("float"), "float",
                                        LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                                          LEXEMEFLAG_RESERVED_KEYWORD)},
-    {LexemeType::DOUBLE,
-     LexemeMetadata("double-precision variable", std::regex("double"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                      LEXEMEFLAG_RESERVED_KEYWORD)},
-    {LexemeType::BOOLEAN, LexemeMetadata("boolean variable", std::regex("bool"), tl::nullopt,
+    {LexemeType::DOUBLE, LexemeMetadata("double-precision variable", std::regex("double"), "double",
+                                        LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
+                                          LEXEMEFLAG_RESERVED_KEYWORD)},
+    {LexemeType::BOOLEAN, LexemeMetadata("boolean variable", std::regex("bool"), "bool",
                                          LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                                            LEXEMEFLAG_RESERVED_KEYWORD)},
-    {LexemeType::STRING, LexemeMetadata("string variable", std::regex("string"), tl::nullopt,
+    {LexemeType::STRING, LexemeMetadata("string variable", std::regex("string"), "string",
                                         LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
                                           LEXEMEFLAG_RESERVED_KEYWORD)},
 
@@ -199,16 +201,13 @@ Lexemes::Lexemes() {
      LexemeMetadata("end of statement", std::regex(";"), ";", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
     {LexemeType::LIST_DELIMITER,
      LexemeMetadata("list delimiter", std::regex("\\,"), ",", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-
-    {LexemeType::IDENTIFIER, LexemeMetadata("identifier", std::regex("[A-Za-z_]+"), tl::nullopt,
-                                            LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
   });
 
   this->assignmentOperators = std::set<LexemeType>();
   this->binaryOperators = std::set<LexemeType>();
   this->dataTypes = std::set<LexemeType>();
   this->literals = std::set<LexemeType>();
-  this->reservedKeywords = std::set<LexemeType>();
+  this->reservedKeywords = std::map<std::string, LexemeType>();
   this->significantToTokenize = std::set<LexemeType>();
   this->unaryOperators = std::set<LexemeType>();
   this->variableModifiers = std::set<LexemeType>();
@@ -234,7 +233,14 @@ Lexemes::Lexemes() {
     }
 
     if (lexemeMetadata.isReservedKeyword()) {
-      this->reservedKeywords.insert(lexemeType);
+      if (this->reservedKeywords.find(lexemeMetadata.codeRepresentation.value_or("")) !=
+          this->reservedKeywords.end()) {
+        // TODO: Proper error
+        throw std::runtime_error(
+          "Attempting to reserve word multiple times. This likely indicates a copy-paste error.");
+      }
+
+      this->reservedKeywords.insert({lexemeMetadata.codeRepresentation.value_or(""), lexemeType});
     }
 
     if (lexemeMetadata.isSignificantToTokenize()) {

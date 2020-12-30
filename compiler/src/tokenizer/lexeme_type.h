@@ -20,6 +20,8 @@ enum class LexemeType {
   WHITESPACE,
   SINGLE_LINE_COMMENT,
   END_OF_FILE,
+  
+  IDENTIFIER,
 
   /*
    * Data types
@@ -101,22 +103,6 @@ enum class LexemeType {
   CLOSE_PARENTHESIS,
   END_OF_STATEMENT,
   LIST_DELIMITER,
-
-  /*
-   * NB: Identifier has been left 'til last to prevent us assigning identifiers
-   * to reserved keywords or data types. Unfortunately that's meant that we
-   * end up matching things like `float` when they're part of identifier names,
-   * eg. `bool floating = false` being tokenized as `bool; float; ing; =; false`
-   * which is obviously not ideal.
-   *
-   * TODO:
-   *   - Move this to a higher precedence level than reserved key words so it
-   *     gets tokenized first.
-   *   - In tokenizer, if we've matched an identifier and we've exactly matched
-   *     a reserved keyword, return the reserved keyword instead.
-   */
-
-  IDENTIFIER,
 };
 
 #endif

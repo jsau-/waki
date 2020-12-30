@@ -3,6 +3,7 @@
 
 #include <map>
 #include <set>
+#include <string>
 
 #include "lexeme_flags.h"
 #include "lexeme_metadata.h"
@@ -22,7 +23,7 @@ struct Lexemes {
   std::set<LexemeType> getUnaryOperators() { return this->unaryOperators; };
   std::set<LexemeType> getAssignmentOperators() { return this->assignmentOperators; };
   std::set<LexemeType> getVariableModifiers() { return this->variableModifiers; };
-  std::set<LexemeType> getReservedKeywords() { return this->reservedKeywords; };
+  std::map<std::string, LexemeType> getReservedKeywords() { return this->reservedKeywords; };
 
 protected:
   // A map between all known lexeme types and metadata describing them
@@ -78,7 +79,7 @@ protected:
    * keyword should be returned instead (to prevent the programmer from trying
    * to re-assign something we've marked as reserved).
    */
-  std::set<LexemeType> reservedKeywords;
+  std::map<std::string, LexemeType> reservedKeywords;
 
 private:
   Lexemes();

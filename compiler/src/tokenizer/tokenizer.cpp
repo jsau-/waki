@@ -1,6 +1,6 @@
 #include "tokenizer.h"
-#include "lexemes.h"
 #include "lexeme_type.h"
+#include "lexemes.h"
 #include "token.h"
 #include "tokenizer_error.h"
 #include <regex>
@@ -39,6 +39,7 @@ TokenizerMatch Tokenizer::nextMatch() {
   }
 
   auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+  auto reservedKeywords = Lexemes::getInstance().getReservedKeywords();
 
   for (auto tokenizerPatternIterator = lexemeMetadata.begin();
        tokenizerPatternIterator != lexemeMetadata.end(); tokenizerPatternIterator++) {
@@ -53,10 +54,24 @@ TokenizerMatch Tokenizer::nextMatch() {
 
     if (std::regex_search(this->sourceText, matches, *tokenPattern,
                           std::regex_constants::match_continuous)) {
-      auto tokenizerMatch = TokenizerMatch(
-        Token(tokenType, matches[0].str(), this->line, this->column), matches[0].str().length());
+      auto tokenValue = matches[0].str();
 
-      this->eatChars(matches[0].str().length());
+      /*
+       * As written, an identifier might be a reserved word. In the case it is,
+       * we want to switch over to using the token type for the reserved
+       * keyword.
+       *
+       * This stops people from using our own keywords in naughty ways!
+       */
+      if (tokenType == LexemeType::IDENTIFIER &&
+          reservedKeywords.find(tokenValue) != reservedKeywords.end()) {
+        tokenType = reservedKeywords.at(tokenValue);
+      }
+
+      auto tokenizerMatch = TokenizerMatch(
+        Token(tokenType, tokenValue, this->line, this->column), tokenValue.length());
+
+      this->eatChars(tokenValue.length());
 
       return tokenizerMatch;
     }

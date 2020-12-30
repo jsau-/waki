@@ -64,9 +64,7 @@ struct LexemeMetadata {
   /**
    * Is this lexeme a literal value?
    */
-  bool isLiteral() {
-    return (this->flags & LEXEMEFLAG_LITERAL) == LEXEMEFLAG_LITERAL;
-  }
+  bool isLiteral() { return (this->flags & LEXEMEFLAG_LITERAL) == LEXEMEFLAG_LITERAL; }
 
   /**
    * Does this lexeme represent a reserved keyword?
@@ -103,7 +101,13 @@ struct LexemeMetadata {
                  tl::optional<std::string> codeRepresentation = tl::nullopt,
                  int flags = LEXEMEFLAG_NONE)
     : displayName(displayName), pattern(pattern), codeRepresentation(codeRepresentation),
-      flags(flags) {}
+      flags(flags) {
+    if (this->isReservedKeyword() && !codeRepresentation.has_value()) {
+      // TODO: Proper error
+      throw std::runtime_error("Reserved keyword with no code representation. No sensible way to "
+                               "handle. Please define a code representation for this type.");
+    }
+  }
 };
 
 #endif

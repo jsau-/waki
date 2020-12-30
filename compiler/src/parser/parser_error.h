@@ -42,7 +42,7 @@ struct ParserError : public std::exception {
       std::string("Parser error at line ") + std::to_string(token.lineNumber) +
       std::string(", column ") + std::to_string(token.columnNumber) + std::string("\n\n") +
       std::string("Expected ") + expectedTokenList + std::string("\n\n") +
-      "Received: " + lexemeMetadata.at(token.type).displayName + std::string("\n\n");
+      "Received: " + lexemeMetadata.at(token.type).displayName + " " + token.value + std::string("\n\n");
   };
 
   char const *what() const throw() { return this->errorMsg.c_str(); }

@@ -19,7 +19,7 @@ bLiteral = true;
 
 dLiteral *= -10.0d;
 
-string sLiteral = 'Wow. This is a string!';
+string stringystroo = 'Wow. This is a string!';
 
 nullable naughtyVar = null;
 
