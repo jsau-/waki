@@ -1,6 +1,6 @@
 #import 'vector3.waki';
 
-function<Vector3> makeUnitVector(const int unit) {
+function makeUnitVector(const int unit) returns Vector3 {
   return Vector3(unit);
 };
 

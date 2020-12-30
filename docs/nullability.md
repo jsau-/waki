@@ -23,7 +23,7 @@ whose signature denotes their parameter _could_ be nullable.
 ```waki
 int myNumCakeLayers = 10;
 
-function<nullable int> priceOfCake(nullable int numCakeLayers) {
+function priceOfCake(nullable int numCakeLayers) returns nullable int {
   if (numCakeLayers) {
     return numCakeLayers * 10;
   }
