@@ -78,6 +78,11 @@ Token Tokenizer::nextMatch() {
 }
 
 void Tokenizer::eatChars(uint64_t charsToEat) {
+  // TODO: This won't work on Windows using \r\n will it?
+  // TODO: Easy optimization - jump to the last-most newline in the block we
+  // want to eat, and calculate the diff between its offset and the offset we
+  // want to eat to; increment line by number of newlines; increment column by
+  // difference in offsets
   for (uint64_t i = 0; i < charsToEat; i++) {
     if (this->sourceText[i] == '\n') {
       this->line++;
