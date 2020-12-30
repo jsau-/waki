@@ -1,8 +1,8 @@
 #include <sstream>
 #include "parser.h"
 #include "parser_error.h"
-#include "statement_creation_error.h"
-#include "variable_declaration_statement.h"
+#include "expressions/bool_literal_expression.h"
+#include "statements/variable_assignment_statement.h"
 
 Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
   this->sourceText = sourceText;
@@ -10,13 +10,31 @@ Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
   this->index = 0;
 }
 
-int Parser::parse() {
-  try {
-    auto foo = VariableDeclarationStatement(TokenType::BITWISE_AND);
-    return 10;
-  } catch (StatementCreationError statementCreationError) {
-    throw ParserError(statementCreationError.reason, tokens[0]);
-  } catch (...) {
-    throw ParserError("Unexpected failure parsing token", tokens[0]);
+std::shared_ptr<BlockStatement> Parser::parse() {
+  auto rootBlock = std::make_shared<BlockStatement>(std::vector<std::shared_ptr<Statement>>());
+
+  while (!this->isAtEnd()) {
+    auto parseResult = this->parseStatement();
+    rootBlock->statements.push_back(parseResult.statement);
+    this->index += parseResult.consumedTokens;
   }
+
+  return rootBlock;
+}
+
+ParseResult Parser::parseStatement() {
+  std::shared_ptr<Statement> statement = std::make_shared<VariableAssignmentStatement>(
+    "foo",
+    AssignmentOperator::ASSIGN_EQUALS,
+    std::make_shared<BoolLiteralExpression>(true)
+  );
+
+  return ParseResult(
+    statement,
+    10
+  );
+}
+
+bool Parser::isAtEnd() {
+  return this->index >= this->tokens.size();
 }

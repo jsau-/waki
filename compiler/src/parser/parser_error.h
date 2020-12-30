@@ -3,7 +3,6 @@
 
 #include <exception>
 #include <string>
-#include <sstream>
 #include "../tokenizer/token.h"
 
 struct ParserError : public std::exception {
@@ -12,21 +11,16 @@ struct ParserError : public std::exception {
   std::string errorMsg;
 
   ParserError(std::string reason, Token token) : reason(reason), token(token) {
-    auto errorStream = std::ostringstream();
-
-    errorStream
-      << "Parser error at line "
-      << std::to_string(token.lineNumber)
-      << ", column "
-      << std::to_string(token.columnNumber)
-      << ". "
-      << std::endl
-      << reason
-      << "Near: "
-      << token.value
-      << std::endl;
-
-    this->errorMsg = errorStream.str();
+    this->errorMsg = std::string("Parser error at line ")
+      + std::to_string(token.lineNumber)
+      + std::string(", column ")
+      + std::to_string(token.columnNumber)
+      + std::string("\n")
+      + reason
+      + std::string("\n")
+      + "Near: "
+      + token.value
+      + std::string("\n");
   };
 
   char const* what() const throw() {

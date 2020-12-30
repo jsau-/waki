@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "emitter/waki_emitter.h"
 #include "parser/parser.h"
 #include "tokenizer/token_names.h"
 #include "tokenizer/token.h"
@@ -27,9 +28,9 @@ myDerivedInt = myBool ? 10 : 20;
 
 mutable nullable int myNullableInt;
 
-myNullableInt = 50;
+myNullableInt *= 50;
 
-myNullableInt = null;
+myNullableInt /= 30;
 
 myDerivedIntFromNull = myNullableInt ?? 50;
 
@@ -44,26 +45,29 @@ function foo(int bar) returns int {
 }
   )"""";
 
+  std::cout << "Instantiating tokenizer" << std::endl;
+
   auto tokenizer = Tokenizer(input);
+
+  std::cout << "Tokenizing input" << std::endl;
 
   const auto tokens = tokenizer.tokenize();
 
-  for (auto const& token: tokens) {
-    std::cout
-      << "Token: "
-      << TOKEN_NAMES.at(token.type)
-      << " (" << (int)token.type << ")"
-      << " | value '" << token.value
-      << "' | line number " << token.lineNumber
-      << " | column number " << token.columnNumber
-      << std::endl;
-  }
+  std::cout << "Instantiating parser" << std::endl;
 
   auto parser = Parser(input, tokens);
 
+  std::cout << "Parsing tokens" << std::endl;
+
   auto ast = parser.parse();
 
-  std::cout << ast;
+  std::cout << "Instantiating emitter" << std::endl;
+
+  auto wakiEmitter = WakiEmitter(ast);
+
+  std::cout << "Emitting waki source" << std::endl;
+
+  std::cout << wakiEmitter.source();
 
   return 0;
 }

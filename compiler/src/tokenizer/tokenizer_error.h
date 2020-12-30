@@ -3,7 +3,6 @@
 
 #include <exception>
 #include <string>
-#include <sstream>
 
 struct TokenizerError : public std::exception {
   std::string sourceText;
@@ -15,17 +14,14 @@ struct TokenizerError : public std::exception {
   TokenizerError(std::string sourceText, size_t index, uint64_t line, uint64_t column) : sourceText(sourceText), index(index), line(line), column(column) {
     auto errorStream = std::ostringstream();
 
-    errorStream
-      << "Tokenizer error at line "
-      << std::to_string(this->line)
-      << ", column "
-      << std::to_string(this->column)
-      << ". Unrecognized character '"
-      << this->sourceText.substr(this->index, 1)
-      << "'."
-      << std::endl;
-
-    this->errorMsg = errorStream.str();
+    this->errorMsg = std::string("Tokenizer error at line ")
+      + std::to_string(this->line)
+      + std::string(", column ")
+      + std::to_string(this->column)
+      + std::string(". Unrecognized character '")
+      + this->sourceText.substr(this->index, 1)
+      + std::string("'.")
+      + std::string("\n");
   };
 
   char const* what() const throw() {
