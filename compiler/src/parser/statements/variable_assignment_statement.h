@@ -24,14 +24,26 @@ struct VariableAssignmentStatement : Statement {
   std::string identifier;
   AssignmentOperator assignmentOperator;
   std::shared_ptr<Expression> expression;
+  bool isMutable;
+  bool isNullable;
+
+  /*
+   * TODO: We might want to track `bool isDeclaration` here and set that as
+   * part of a later phase, eg. the typechecker. That'd let us check if we're
+   * doing silly stuff like `*=` at declaration time which is very likely to be
+   * a programmer error.
+   */
 
   VariableAssignmentStatement(DataType dataType, std::string identifier,
                               AssignmentOperator assignmentOperator,
-                              std::shared_ptr<Expression> expression)
+                              std::shared_ptr<Expression> expression,
+                              bool isMutable = false, bool isNullable = false)
       : dataType(dataType),
         identifier(identifier),
         assignmentOperator(assignmentOperator),
-        expression(expression) {}
+        expression(expression),
+        isMutable(isMutable),
+        isNullable(isNullable) {}
 
   virtual void acceptAstVisitor(AstVisitor& visitor) override {
     visitor.visitVariableAssignmentStatement(*this);

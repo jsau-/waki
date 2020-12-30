@@ -14,12 +14,14 @@ float fLiteral = 30.0040f;
 iLiteral += 20;
 // Brapadoo! ;;;;;;;;;;;;;;;;;;;
 
-bool bLiteral = false;
-bLiteralTwo = true;
+mutable bool bLiteral = false;
+bLiteral = true;
 
 dLiteral *= -10.0d;
 
-string sLiteral = 'Wow. This is a string!';;
+string sLiteral = 'Wow. This is a string!';
+
+nullable naughtyVar = null;
   )"""";
 
   std::cout << "Instantiating tokenizer" << std::endl;

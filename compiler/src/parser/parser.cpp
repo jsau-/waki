@@ -183,6 +183,30 @@ std::shared_ptr<Statement> Parser::parseStatement() {
 
 std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   auto dataType = DataType::UNKNOWN;
+  auto isMutable = false;
+  auto isNullable = false;
+
+  /*
+   * TODO: This technically will allow nonsense like
+   * `nullable nullable mutable mutable nullable int foo`, but I don't
+   * particularly see any value in throwing a compiler error if people decide
+   * to be excessive.
+   *
+   * Probably a sensible place to emit a warning though, eg. count mutables and
+   * nullables, if either >= 1 emit a warning.
+   */
+  while (
+      this->checkCurrentTokenType({TokenType::MUTABLE, TokenType::NULLABLE})) {
+    auto variableModifier = this->advance();
+
+    if (variableModifier.type == TokenType::MUTABLE) {
+      isMutable = true;
+    }
+
+    if (variableModifier.type == TokenType::NULLABLE) {
+      isNullable = true;
+    }
+  }
 
   if (this->checkCurrentTokenType(
           {{TokenType::SIGNED_INTEGER_32, TokenType::FLOAT, TokenType::DOUBLE,
@@ -212,7 +236,8 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   this->assertCurrentTokenTypeAndAdvance(TokenType::END_OF_STATEMENT);
 
   return std::make_shared<VariableAssignmentStatement>(
-      dataType, identifier.value, assignmentOperator, expression);
+      dataType, identifier.value, assignmentOperator, expression, isMutable,
+      isNullable);
 }
 
 bool Parser::isAtEnd() { return this->index >= this->tokens.size(); }

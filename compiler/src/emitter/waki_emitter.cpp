@@ -38,6 +38,14 @@ void WakiEmitter::visitBlockStatement(BlockStatement& node) {
 
 void WakiEmitter::visitVariableAssignmentStatement(
     VariableAssignmentStatement& node) {
+  if (node.isMutable) {
+    this->sourceStream << "mutable ";
+  }
+
+  if (node.isNullable) {
+    this->sourceStream << "nullable ";
+  }
+
   // TODO: Token definition should probably include this!
   switch (node.dataType) {
     case DataType::UNKNOWN:
