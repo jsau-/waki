@@ -6,12 +6,11 @@
 
 struct TokenizerError : public std::exception {
   std::string sourceText;
-  size_t index;
   uint64_t line;
   uint64_t column;
   std::string errorMsg;
 
-  TokenizerError(std::string sourceText, size_t index, uint64_t line, uint64_t column) : sourceText(sourceText), index(index), line(line), column(column) {
+  TokenizerError(std::string sourceText, uint64_t line, uint64_t column) : sourceText(sourceText), line(line), column(column) {
     auto errorStream = std::ostringstream();
 
     this->errorMsg = std::string("Tokenizer error at line ")
@@ -19,7 +18,7 @@ struct TokenizerError : public std::exception {
       + std::string(", column ")
       + std::to_string(this->column)
       + std::string(". Unrecognized character '")
-      + this->sourceText.substr(this->index, 1)
+      + this->sourceText.substr(0, 1)
       + std::string("'.")
       + std::string("\n");
   };

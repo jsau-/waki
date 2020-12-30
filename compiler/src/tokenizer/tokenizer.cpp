@@ -1,3 +1,4 @@
+#include <regex>
 #include <sstream>
 #include "token.h"
 #include "token_patterns.h"
@@ -18,7 +19,6 @@ const TokenType excludedTokenTypes[] = {
 
 Tokenizer::Tokenizer(std::string sourceText) {
   this->sourceText = sourceText;
-  this->index = 0;
   this->line = 0;
   this->column = 0;
 }
@@ -48,7 +48,7 @@ std::vector<Token> Tokenizer::tokenize() {
 }
 
 TokenizerMatch Tokenizer::nextMatch() {
-  if (this->sourceText.length() <= this->index) {
+  if (this->sourceText.length() == 0) {
     return TokenizerMatch(
       Token(TokenType::END_OF_FILE, "", this->line, this->column),
       0
@@ -63,47 +63,26 @@ TokenizerMatch Tokenizer::nextMatch() {
     auto tokenType = tokenizerPatternIterator->first;
     auto tokenPattern = tokenizerPatternIterator->second;
 
-    auto patternToCheck = std::string(1, this->sourceText[this->index]);
-    auto currentCharIndex = this->index;
+    std::smatch matches;
 
-    std::string lastMatchingPattern = std::regex_match(patternToCheck, tokenPattern) ? patternToCheck : "";
-    auto startLine = this->line;
-    auto startColumn = this->column;
-
-    do {
-      // We currently match the current token - great, let's cache that
-      if (std::regex_match(patternToCheck, tokenPattern)) {
-        lastMatchingPattern = patternToCheck;
-      /*
-       * We _used_ to match this token, but we no longer do. Let's exit now so
-       * we don't have to lookahead through the entire source file.
-       */
-      } else if (lastMatchingPattern != "") {
-        break;
-      }
-
-      patternToCheck.append(std::string(1, this->sourceText[currentCharIndex + 1]));
-      currentCharIndex++;
-    } while (this->sourceText.length() > currentCharIndex + 1);
-
-    if (lastMatchingPattern != "") {
-      this->eatChars(lastMatchingPattern.length());
-
-      return TokenizerMatch(
-        Token(tokenType, lastMatchingPattern, startLine, startColumn),
-        lastMatchingPattern.length()
+    if (std::regex_search(this->sourceText, matches, tokenPattern, std::regex_constants::match_continuous)) {
+      auto tokenizerMatch = TokenizerMatch(
+        Token(tokenType, matches[0].str(), this->line, this->column),
+        matches[0].str().length()
       );
+
+      this->eatChars(matches[0].str().length());
+
+      return tokenizerMatch;
     }
   }
 
-  throw TokenizerError(this->sourceText, this->index, this->line, this->column);
+  throw TokenizerError(this->sourceText, this->line, this->column);
 }
 
 void Tokenizer::eatChars(int charsToEat) {
-  auto substring = this->sourceText.substr(this->index, charsToEat);
-
-  for(char& curChar : substring) {
-    if ('\n' == curChar) {
+  for (int i = 0; i < charsToEat; i++) {
+    if (this->sourceText[i] == '\n') {
       this->line++;
       this->column = 0;
     } else {
@@ -111,5 +90,5 @@ void Tokenizer::eatChars(int charsToEat) {
     }
   }
 
-  this->index += charsToEat;
+  this->sourceText.erase(0, charsToEat);
 }

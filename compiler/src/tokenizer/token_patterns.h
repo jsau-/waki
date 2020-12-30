@@ -11,8 +11,8 @@
  * used to match them (eg. END_OF_FILE)
  */
 const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
-  { TokenType::WHITESPACE, std::regex("\\s+") },
-  { TokenType::SINGLE_LINE_COMMENT, std::regex("//.*$") },
+  { TokenType::WHITESPACE, std::regex("[\\s\\r\\R\\n]+") },
+  { TokenType::SINGLE_LINE_COMMENT, std::regex("//.*") },
   { TokenType::MULTI_LINE_COMMENT, std::regex("/\\*.*\\*/", std::regex::extended) },
 
   { TokenType::SIGNED_INTEGER_32, std::regex("int" )},
@@ -37,9 +37,9 @@ const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
 
   { TokenType::EQUALS, std::regex("==") },
   { TokenType::LOGICAL_AND, std::regex("&&") },
-  { TokenType::LOGICAL_OR, std::regex("||") },
+  { TokenType::LOGICAL_OR, std::regex("\\|\\|") },
   { TokenType::BITWISE_AND, std::regex("&") },
-  { TokenType::BITWISE_OR, std::regex("|") },
+  { TokenType::BITWISE_OR, std::regex("\\|") },
   { TokenType::BITWISE_XOR, std::regex("\\^") },
   { TokenType::BITWISE_NOT, std::regex("~") },
   { TokenType::BITWISE_SHIFT_LEFT, std::regex("<<") },

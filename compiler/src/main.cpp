@@ -8,7 +8,7 @@
 
 int main() {
   auto input = R""""(
-#import 'foo.waki';
+#import 'foo.waki'; // This gets ignored!
 
 namespace MyNamespace {
   int myInt = 10;
