@@ -3,21 +3,37 @@
 
 #include <memory>
 #include <vector>
-#include "parse_result.h"
-#include "statements/block_statement.h"
+
 #include "../tokenizer/token.h"
+#include "expressions/expression.h"
+#include "statements/block_statement.h"
+#include "statements/statement.h"
 
 struct Parser {
   Parser(std::string sourceText, std::vector<Token> tokens);
 
   std::shared_ptr<BlockStatement> parse();
 
-private:
+ private:
   std::string sourceText;
   std::vector<Token> tokens;
   size_t index;
 
-  ParseResult parseStatement();
+  Token advance();
+  Token assertCurrentTokenType(TokenType type);
+  Token assertCurrentTokenType(std::vector<TokenType> types);
+  Token assertCurrentTokenTypeAndAdvance(TokenType type);
+  Token assertCurrentTokenTypeAndAdvance(std::vector<TokenType> types);
+
+  Token previousToken();
+  Token currentToken();
+  Token nextToken();
+
+  std::shared_ptr<Expression> parseExpression();
+  std::shared_ptr<FloatLiteralExpression> parseFloatLiteralExpression();
+
+  std::shared_ptr<Statement> parseStatement();
+  std::shared_ptr<Statement> parseVariableAssignmentStatement();
 
   bool isAtEnd();
 };

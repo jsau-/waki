@@ -1,5 +1,6 @@
-#include <stdexcept>
 #include "waki_emitter.h"
+
+#include <stdexcept>
 
 WakiEmitter::WakiEmitter(std::shared_ptr<BlockStatement> rootNode) {
   this->sourceStream = std::ostringstream();
@@ -18,44 +19,42 @@ void WakiEmitter::visitFloatLiteralExpression(FloatLiteralExpression& node) {
   this->sourceStream << std::to_string(node.value) << "f";
 }
 
-void WakiEmitter::visitNullLiteralExpression() {
-  this->sourceStream << "null";
-}
+void WakiEmitter::visitNullLiteralExpression() { this->sourceStream << "null"; }
 
-void WakiEmitter::visitSignedInt32LiteralExpression(SignedInt32LiteralExpression& node) {
+void WakiEmitter::visitSignedInt32LiteralExpression(
+    SignedInt32LiteralExpression& node) {
   this->sourceStream << std::to_string(node.value);
 }
 
 void WakiEmitter::visitBlockStatement(BlockStatement& node) {
-  for (auto const& statement: node.statements) {
+  for (auto const& statement : node.statements) {
     statement->acceptAstVisitor(*this);
   }
 }
 
-void WakiEmitter::visitVariableAssignmentStatement(VariableAssignmentStatement& node) {
-  this->sourceStream
-    << node.identifier
-    << " ";
+void WakiEmitter::visitVariableAssignmentStatement(
+    VariableAssignmentStatement& node) {
+  this->sourceStream << node.identifier << " ";
 
   // TODO: Token definition should probably include this!
   switch (node.assignmentOperator) {
-  case AssignmentOperator::ADD_ASSIGN:
-    this->sourceStream << "+=";
-    break;
-  case AssignmentOperator::ASSIGN_EQUALS:
-    this->sourceStream << "=";
-    break;
-  case AssignmentOperator::DIVIDE_ASSIGN:
-    this->sourceStream << "/=";
-    break;
-  case AssignmentOperator::MULTIPLY_ASSIGN:
-    this->sourceStream << "*=";
-    break;
-  case AssignmentOperator::SUBTRACT_ASSIGN:
-    this->sourceStream << "-=";
-    break;
-  default:
-    throw std::runtime_error("Unexpected assignment operator");
+    case AssignmentOperator::ADD_ASSIGN:
+      this->sourceStream << "+=";
+      break;
+    case AssignmentOperator::ASSIGN_EQUALS:
+      this->sourceStream << "=";
+      break;
+    case AssignmentOperator::DIVIDE_ASSIGN:
+      this->sourceStream << "/=";
+      break;
+    case AssignmentOperator::MULTIPLY_ASSIGN:
+      this->sourceStream << "*=";
+      break;
+    case AssignmentOperator::SUBTRACT_ASSIGN:
+      this->sourceStream << "-=";
+      break;
+    default:
+      throw std::runtime_error("Unexpected assignment operator");
   }
 
   this->sourceStream << " ";
@@ -65,6 +64,4 @@ void WakiEmitter::visitVariableAssignmentStatement(VariableAssignmentStatement& 
   this->sourceStream << ";\n";
 }
 
-std::string WakiEmitter::source() {
-  return this->sourceStream.str();
-}
+std::string WakiEmitter::source() { return this->sourceStream.str(); }

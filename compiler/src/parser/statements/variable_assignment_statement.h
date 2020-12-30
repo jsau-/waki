@@ -2,9 +2,10 @@
 #define waki_parser_statements_variable_assignment_statement
 
 #include <memory>
-#include "statement.h"
+
 #include "../expressions/expression.h"
 #include "../types/assignment_operator.h"
+#include "statement.h"
 
 /**
  * Statement representing the assignment of an expression to a variable.
@@ -22,7 +23,12 @@ struct VariableAssignmentStatement : Statement {
   AssignmentOperator assignmentOperator;
   std::shared_ptr<Expression> expression;
 
-  VariableAssignmentStatement(std::string identifier, AssignmentOperator assignmentOperator, std::shared_ptr<Expression> expression) : identifier(identifier), assignmentOperator(assignmentOperator), expression(expression) {}
+  VariableAssignmentStatement(std::string identifier,
+                              AssignmentOperator assignmentOperator,
+                              std::shared_ptr<Expression> expression)
+      : identifier(identifier),
+        assignmentOperator(assignmentOperator),
+        expression(expression) {}
 
   virtual void acceptAstVisitor(AstVisitor& visitor) override {
     visitor.visitVariableAssignmentStatement(*this);

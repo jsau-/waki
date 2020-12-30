@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "statement.h"
 
 /**
@@ -12,7 +13,8 @@
 struct BlockStatement : Statement {
   std::vector<std::shared_ptr<Statement>> statements;
 
-  BlockStatement(std::vector<std::shared_ptr<Statement>> statements) : statements(statements) {}
+  BlockStatement(std::vector<std::shared_ptr<Statement>> statements)
+      : statements(statements) {}
 
   virtual void acceptAstVisitor(AstVisitor& visitor) override {
     visitor.visitBlockStatement(*this);

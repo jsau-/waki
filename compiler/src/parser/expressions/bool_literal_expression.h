@@ -12,7 +12,7 @@
 struct BoolLiteralExpression : Expression {
   bool value;
 
-  BoolLiteralExpression(bool value) : value(value) {};
+  BoolLiteralExpression(bool value) : value(value){};
 
   virtual void acceptAstVisitor(AstVisitor& visitor) override {
     visitor.visitBoolLiteralExpression(*this);

@@ -4,7 +4,7 @@
 #include "../ast_node.h"
 
 struct Statement : AstNode {
-  virtual ~Statement() {};
+  virtual ~Statement(){};
 };
 
 #endif

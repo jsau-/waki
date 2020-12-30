@@ -4,7 +4,7 @@
 #include "../ast_node.h"
 
 struct Expression : AstNode {
-  virtual ~Expression() {};
+  virtual ~Expression(){};
 };
 
 #endif

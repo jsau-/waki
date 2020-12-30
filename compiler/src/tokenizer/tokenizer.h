@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+
 #include "token.h"
 #include "tokenizer_match.h"
 
@@ -14,7 +15,7 @@ struct Tokenizer {
    */
   std::vector<Token> tokenize();
 
-private:
+ private:
   std::string sourceText;
 
   uint64_t line;

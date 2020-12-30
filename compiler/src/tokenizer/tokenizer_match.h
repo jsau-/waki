@@ -7,8 +7,9 @@ struct TokenizerMatch {
   Token token;
   uint64_t consumedCharacters;
 
-  TokenizerMatch(Token token, uint64_t consumedCharacters) : token(token), consumedCharacters(consumedCharacters) {}
-  TokenizerMatch() : TokenizerMatch(Token(), 0) {};
+  TokenizerMatch(Token token, uint64_t consumedCharacters)
+      : token(token), consumedCharacters(consumedCharacters) {}
+  TokenizerMatch() : TokenizerMatch(Token(), 0){};
 };
 
 #endif

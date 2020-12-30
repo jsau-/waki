@@ -1,44 +1,17 @@
 #include <iostream>
 #include <string>
+
 #include "emitter/waki_emitter.h"
 #include "parser/parser.h"
-#include "tokenizer/token_names.h"
 #include "tokenizer/token.h"
+#include "tokenizer/token_names.h"
 #include "tokenizer/tokenizer.h"
 
 int main() {
   auto input = R""""(
-#import 'foo.waki'; // This gets ignored!
+myFloat += 30.0f;
 
-namespace MyNamespace {
-  int myInt = 10;
-
-  MY_CONSTANT = 500.0f;
-
-  mutable int myOtherInt = 2;
-  float myFloat = 1.0f;
-
-  // some stuff is bad
-  myOtherInt = 4;
-}
-
-bool myBool = false;
-
-myDerivedInt = myBool ? 10 : 20;
-
-mutable nullable int myNullableInt;
-
-myNullableInt *= 50;
-
-myNullableInt /= 30;
-
-myDerivedIntFromNull = myNullableInt ?? 50;
-
-baz = 50;
-
-function foo(int bar) returns int {
-  return bar * 10;
-}
+myOtherFloat + 20.0f;
   )"""";
 
   std::cout << "Instantiating tokenizer" << std::endl;
@@ -52,15 +25,12 @@ function foo(int bar) returns int {
   std::cout << "Tokens:" << std::endl;
   std::cout << "---------------------------" << std::endl;
 
-  for (auto const& token: tokens) {
-    std::cout
-      << "Token: "
-      << TOKEN_NAMES.at(token.type)
-      << " (" << (int)token.type << ")"
-      << " | value '" << token.value
-      << "' | line number " << token.lineNumber
-      << " | column number " << token.columnNumber
-      << std::endl;
+  for (auto const& token : tokens) {
+    std::cout << "Token: " << TOKEN_NAMES.at(token.type) << " ("
+              << (int)token.type << ")"
+              << " | value '" << token.value << "' | line number "
+              << token.lineNumber << " | column number " << token.columnNumber
+              << std::endl;
   }
   std::cout << "---------------------------" << std::endl << std::endl;
 

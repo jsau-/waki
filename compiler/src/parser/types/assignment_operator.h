@@ -1,9 +1,6 @@
 #ifndef waki_parser_types_assignment_operator
 #define waki_parser_types_assignment_operator
 
-#include <stdexcept>
-#include <string>
-#include "../../tokenizer/token_names.h"
 #include "../../tokenizer/token_type.h"
 
 enum class AssignmentOperator {

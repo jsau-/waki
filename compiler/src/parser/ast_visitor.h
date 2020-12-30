@@ -10,16 +10,18 @@ struct BlockStatement;
 struct VariableAssignmentStatement;
 
 struct AstVisitor {
-  virtual ~AstVisitor() {};
+  virtual ~AstVisitor(){};
 
   virtual void visitBoolLiteralExpression(BoolLiteralExpression& node) = 0;
   virtual void visitDoubleLiteralExpression(DoubleLiteralExpression& node) = 0;
   virtual void visitFloatLiteralExpression(FloatLiteralExpression& node) = 0;
   virtual void visitNullLiteralExpression() = 0;
-  virtual void visitSignedInt32LiteralExpression(SignedInt32LiteralExpression& node) = 0;
+  virtual void visitSignedInt32LiteralExpression(
+      SignedInt32LiteralExpression& node) = 0;
 
   virtual void visitBlockStatement(BlockStatement& node) = 0;
-  virtual void visitVariableAssignmentStatement(VariableAssignmentStatement& node) = 0;
+  virtual void visitVariableAssignmentStatement(
+      VariableAssignmentStatement& node) = 0;
 };
 
 #endif
