@@ -6,6 +6,7 @@ struct DoubleLiteralExpression;
 struct FloatLiteralExpression;
 struct NullLiteralExpression;
 struct SignedInt32LiteralExpression;
+struct StringLiteralExpression;
 struct BlockStatement;
 struct VariableAssignmentStatement;
 
@@ -18,6 +19,7 @@ struct AstVisitor {
   virtual void visitNullLiteralExpression() = 0;
   virtual void visitSignedInt32LiteralExpression(
       SignedInt32LiteralExpression& node) = 0;
+  virtual void visitStringLiteralExpression(StringLiteralExpression& node) = 0;
 
   virtual void visitBlockStatement(BlockStatement& node) = 0;
   virtual void visitVariableAssignmentStatement(

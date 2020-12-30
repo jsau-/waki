@@ -24,13 +24,20 @@ struct Parser {
   Token assertCurrentTokenType(std::vector<TokenType> types);
   Token assertCurrentTokenTypeAndAdvance(TokenType type);
   Token assertCurrentTokenTypeAndAdvance(std::vector<TokenType> types);
+  bool checkCurrentTokenType(TokenType type);
+  bool checkCurrentTokenType(std::vector<TokenType> types);
 
   Token previousToken();
   Token currentToken();
   Token nextToken();
 
   std::shared_ptr<Expression> parseExpression();
+  std::shared_ptr<BoolLiteralExpression> parseBoolLiteralExpression();
+  std::shared_ptr<DoubleLiteralExpression> parseDoubleLiteralExpression();
   std::shared_ptr<FloatLiteralExpression> parseFloatLiteralExpression();
+  std::shared_ptr<NullLiteralExpression> parseNullLiteralExpression();
+  std::shared_ptr<SignedInt32LiteralExpression> parseSignedInt32LiteralExpression();
+  std::shared_ptr<StringLiteralExpression> parseStringLiteralExpression();
 
   std::shared_ptr<Statement> parseStatement();
   std::shared_ptr<Statement> parseVariableAssignmentStatement();

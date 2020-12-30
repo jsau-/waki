@@ -15,6 +15,11 @@ const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
     {TokenType::WHITESPACE, std::regex("\\s+")},
     {TokenType::SINGLE_LINE_COMMENT, std::regex("//.*")},
 
+    /*
+     * TODO: This is pretty dumb, and will trigger identifier declarations
+     * containing these tokens, eg. `doubleInterval`. This is obviously not
+     * something we want.
+     */
     {TokenType::SIGNED_INTEGER_32, std::regex("int")},
     {TokenType::FLOAT, std::regex("float")},
     {TokenType::DOUBLE, std::regex("double")},

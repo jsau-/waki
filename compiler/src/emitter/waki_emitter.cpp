@@ -26,6 +26,10 @@ void WakiEmitter::visitSignedInt32LiteralExpression(
   this->sourceStream << std::to_string(node.value);
 }
 
+void WakiEmitter::visitStringLiteralExpression(StringLiteralExpression& node) {
+  this->sourceStream << node.value;
+}
+
 void WakiEmitter::visitBlockStatement(BlockStatement& node) {
   for (auto const& statement : node.statements) {
     statement->acceptAstVisitor(*this);
