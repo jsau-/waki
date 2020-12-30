@@ -53,6 +53,21 @@ function foo(int bar) returns int {
 
   const auto tokens = tokenizer.tokenize();
 
+  std::cout << "Tokens:" << std::endl;
+  std::cout << "---------------------------" << std::endl;
+
+  for (auto const& token: tokens) {
+    std::cout
+      << "Token: "
+      << TOKEN_NAMES.at(token.type)
+      << " (" << (int)token.type << ")"
+      << " | value '" << token.value
+      << "' | line number " << token.lineNumber
+      << " | column number " << token.columnNumber
+      << std::endl;
+  }
+  std::cout << "---------------------------" << std::endl << std::endl;
+
   std::cout << "Instantiating parser" << std::endl;
 
   auto parser = Parser(input, tokens);
@@ -65,7 +80,8 @@ function foo(int bar) returns int {
 
   auto wakiEmitter = WakiEmitter(ast);
 
-  std::cout << "Emitting waki source" << std::endl;
+  std::cout << std::endl << "Emitted source:" << std::endl;
+  std::cout << "---------------------------" << std::endl;
 
   std::cout << wakiEmitter.source();
 
