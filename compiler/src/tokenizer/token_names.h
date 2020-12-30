@@ -31,6 +31,7 @@ const std::map<TokenType, std::string> TOKEN_NAMES = {
     {TokenType::STRING_LITERAL, "string literal"},
 
     {TokenType::EQUALS, "=="},
+    {TokenType::NOT_EQUALS, "!="},
     {TokenType::LOGICAL_AND, "&&"},
     {TokenType::LOGICAL_OR, "||"},
     {TokenType::BITWISE_AND, "&"},
@@ -41,6 +42,7 @@ const std::map<TokenType, std::string> TOKEN_NAMES = {
     {TokenType::BITWISE_SHIFT_RIGHT, ">>"},
     {TokenType::LESS_THAN_OR_EQUAL, "<="},
     {TokenType::GREATER_THAN_OR_EQUAL, ">="},
+    {TokenType::NOT, "!"},
     {TokenType::LESS_THAN, "<"},
     {TokenType::GREATER_THAN, ">"},
     {TokenType::NULL_COALESCE, "??"},

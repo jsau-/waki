@@ -41,6 +41,7 @@ const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
     {TokenType::STRING_LITERAL, std::regex("'([^'\\\\]|\\\\.)*'")},
 
     {TokenType::EQUALS, std::regex("==")},
+    {TokenType::NOT_EQUALS, std::regex("!=")},
     {TokenType::LOGICAL_AND, std::regex("&&")},
     {TokenType::LOGICAL_OR, std::regex("\\|\\|")},
     {TokenType::BITWISE_AND, std::regex("&")},
@@ -51,6 +52,7 @@ const std::map<TokenType, std::regex> TOKEN_PATTERNS = {
     {TokenType::BITWISE_SHIFT_RIGHT, std::regex(">>")},
     {TokenType::LESS_THAN_OR_EQUAL, std::regex("<=")},
     {TokenType::GREATER_THAN_OR_EQUAL, std::regex(">=")},
+    {TokenType::NOT, std::regex("!")},
     {TokenType::LESS_THAN, std::regex("<")},
     {TokenType::GREATER_THAN, std::regex(">")},
     {TokenType::NULL_COALESCE, std::regex("\\?\\?")},
