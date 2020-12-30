@@ -46,8 +46,10 @@ TokenizerMatch Tokenizer::nextMatch() {
     return TokenizerMatch(Token(LexemeType::END_OF_FILE, "", this->line, this->column), 0);
   }
 
-  for (auto tokenizerPatternIterator = Lexemes::metadata.begin();
-       tokenizerPatternIterator != Lexemes::metadata.end(); tokenizerPatternIterator++) {
+  auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+
+  for (auto tokenizerPatternIterator = lexemeMetadata.begin();
+       tokenizerPatternIterator != lexemeMetadata.end(); tokenizerPatternIterator++) {
     auto tokenType = tokenizerPatternIterator->first;
     auto tokenPattern = tokenizerPatternIterator->second.pattern;
 

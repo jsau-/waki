@@ -39,8 +39,10 @@ myOtherBinaryOp = (((10 += 2) && naughtyVar)) || 30;
   std::cout << "Tokens:" << std::endl;
   std::cout << "---------------------------" << std::endl;
 
+  auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+
   for (auto const &token : tokens) {
-    std::cout << "Token: " << Lexemes::metadata.at(token.type).displayName << " ("
+    std::cout << "Token: " << lexemeMetadata.at(token.type).displayName << " ("
               << (int)token.type << ")"
               << " | value '" << token.value << "' | line number " << token.lineNumber
               << " | column number " << token.columnNumber << std::endl;

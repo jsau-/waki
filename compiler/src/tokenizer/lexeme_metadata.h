@@ -62,6 +62,13 @@ struct LexemeMetadata {
   };
 
   /**
+   * Does this lexeme represent a reserved keyword?
+   */
+  bool isReservedKeyword() {
+    return (this->flags & LEXEMEFLAG_RESERVED_KEYWORD) == LEXEMEFLAG_RESERVED_KEYWORD;
+  }
+
+  /**
    * Does this lexeme represent a unary operator? i.e. one with only a right
    * operand.
    */

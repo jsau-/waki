@@ -19,14 +19,16 @@ struct ParserError : public std::exception {
     : token(token), expectedTokenTypes(expectedTokenTypes) {
     std::string expectedTokenList;
 
+    auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+
     if (expectedTokenTypes.size() == 1) {
-      expectedTokenList = Lexemes::metadata.at(expectedTokenTypes[0]).displayName;
+      expectedTokenList = lexemeMetadata.at(expectedTokenTypes[0]).displayName;
     } else {
       auto expectedTokenListStream = std::ostringstream();
       expectedTokenListStream << "one of " << std::endl;
 
       for (auto &expectedTokenType : expectedTokenTypes) {
-        expectedTokenListStream << " " << Lexemes::metadata.at(expectedTokenType).displayName;
+        expectedTokenListStream << " " << lexemeMetadata.at(expectedTokenType).displayName;
         if (&expectedTokenType != &expectedTokenTypes.back()) {
           expectedTokenListStream << std::endl;
         }
@@ -39,7 +41,7 @@ struct ParserError : public std::exception {
       std::string("Parser error at line ") + std::to_string(token.lineNumber) +
       std::string(", column ") + std::to_string(token.columnNumber) + std::string("\n\n") +
       std::string("Expected ") + expectedTokenList + std::string("\n\n") +
-      "Received: " + Lexemes::metadata.at(token.type).displayName + std::string("\n\n");
+      "Received: " + lexemeMetadata.at(token.type).displayName + std::string("\n\n");
   };
 
   char const *what() const throw() { return this->errorMsg.c_str(); }
