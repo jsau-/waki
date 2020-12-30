@@ -26,7 +26,22 @@ std::shared_ptr<BlockStatement> Parser::parse() {
   auto rootBlock = std::make_shared<BlockStatement>(std::vector<std::shared_ptr<Statement>>());
 
   while (!this->isAtEnd()) {
+    /*
+     * TODO: Some form of recoverability. Only being told about the _first_
+     * parse error in a file might not be the best development experience -
+     * eg. if you've missed semicolons on 20 different lines, you want to be
+     * told about all of them.
+     *
+     * In the case a statement can't be parsed, catch the parse error,
+     * swallow it (likely some kind of errors array), swallow tokens until we
+     * reach something that looks like a sensible starting point.
+     *
+     * eg. Swallow all parse errors until we reach some terminal block of scope,
+     * like a function end, or a semicolon. It won't be perfect, but it'll
+     * definitely be better than an immediate exit.
+     */
     auto parseResult = this->parseStatement();
+
     /*
      * parseStatement returns nullptr if there was nothing to do (eg. we
      * reached the end as part of the current parse iteration), hence the need
