@@ -6,16 +6,6 @@
 #include <regex>
 #include <sstream>
 
-/*
- * Tokens we want to filter out before returning.
- */
-const LexemeType excludedTokenTypes[] = {
-  LexemeType::UNKNOWN,
-  LexemeType::WHITESPACE,
-  LexemeType::END_OF_FILE,
-  LexemeType::SINGLE_LINE_COMMENT,
-};
-
 Tokenizer::Tokenizer(std::string sourceText) {
   this->sourceText = sourceText;
   this->line = 0;
@@ -25,13 +15,15 @@ Tokenizer::Tokenizer(std::string sourceText) {
 std::vector<Token> Tokenizer::tokenize() {
   auto tokens = std::vector<Token>();
 
+  auto significantLexemes = Lexemes::getInstance().getSignificantToTokenize();
+
   TokenizerMatch mostRecentMatch;
 
   do {
     mostRecentMatch = this->nextMatch();
 
-    auto isTokenExcluded = std::find(std::begin(excludedTokenTypes), std::end(excludedTokenTypes),
-                                     mostRecentMatch.token.type) != std::end(excludedTokenTypes);
+    auto isTokenExcluded = std::find(std::begin(significantLexemes), std::end(significantLexemes),
+                                     mostRecentMatch.token.type) == std::end(significantLexemes);
 
     if (!isTokenExcluded) {
       tokens.push_back(mostRecentMatch.token);
