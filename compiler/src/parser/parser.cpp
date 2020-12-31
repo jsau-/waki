@@ -23,7 +23,8 @@ Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
 }
 
 std::shared_ptr<BlockStatement> Parser::parse() {
-  auto rootBlock = std::make_shared<BlockStatement>(std::vector<std::shared_ptr<Statement>>());
+  auto rootBlock =
+    std::make_shared<BlockStatement>(0, 0, std::vector<std::shared_ptr<Statement>>());
 
   while (!this->isAtEnd()) {
     /*
@@ -376,6 +377,8 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   auto isMutable = false;
   auto isNullable = false;
 
+  Token firstToken = this->currentToken();
+
   /*
    * TODO: This technically will allow nonsense like
    * `nullable nullable mutable mutable nullable int foo`, but I don't
@@ -416,7 +419,8 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   this->assertCurrentTokenTypeAndAdvance(LexemeType::END_OF_STATEMENT);
 
   return std::make_shared<VariableAssignmentStatement>(
-    dataType, identifier.value, operatorToken.type, expression, isMutable, isNullable);
+    firstToken.lineNumber, firstToken.columnNumber, dataType, identifier.value, operatorToken.type,
+    expression, isMutable, isNullable);
 }
 
 bool Parser::isAtEnd() { return this->index >= this->tokens.size(); }

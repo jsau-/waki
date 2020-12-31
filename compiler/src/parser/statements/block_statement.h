@@ -13,10 +13,11 @@
 struct BlockStatement : Statement {
   std::vector<std::shared_ptr<Statement>> statements;
 
-  BlockStatement(std::vector<std::shared_ptr<Statement>> statements)
-      : statements(statements) {}
+  BlockStatement(uint64_t lineDeclared, uint64_t columnDeclared,
+                 std::vector<std::shared_ptr<Statement>> statements)
+    : Statement(lineDeclared, columnDeclared), statements(statements) {}
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitBlockStatement(*this);
   };
 };

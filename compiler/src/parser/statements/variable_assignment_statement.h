@@ -27,18 +27,13 @@ struct VariableAssignmentStatement : Statement {
   bool isMutable;
   bool isNullable;
 
-  /*
-   * TODO: We might want to track `bool isDeclaration` here and set that as
-   * part of a later phase, eg. the typechecker. That'd let us check if we're
-   * doing silly stuff like `*=` at declaration time which is very likely to be
-   * a programmer error.
-   */
-
-  VariableAssignmentStatement(LexemeType dataType, std::string identifier,
-                              LexemeType assignmentOperator, std::shared_ptr<Expression> expression,
-                              bool isMutable = false, bool isNullable = false)
-    : dataType(dataType), identifier(identifier), assignmentOperator(assignmentOperator),
-      expression(expression), isMutable(isMutable), isNullable(isNullable) {
+  VariableAssignmentStatement(uint64_t lineDeclared, uint64_t columnDeclared, LexemeType dataType,
+                              std::string identifier, LexemeType assignmentOperator,
+                              std::shared_ptr<Expression> expression, bool isMutable = false,
+                              bool isNullable = false)
+    : Statement(lineDeclared, columnDeclared), dataType(dataType),
+      identifier(identifier), assignmentOperator(assignmentOperator), expression(expression),
+      isMutable(isMutable), isNullable(isNullable) {
     auto lexemes = Lexemes::getInstance();
     auto assignmentOperators = lexemes.getAssignmentOperators();
     auto dataTypes = lexemes.getDataTypes();
