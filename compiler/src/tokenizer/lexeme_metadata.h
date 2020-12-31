@@ -57,27 +57,23 @@ struct LexemeMetadata {
    * tokenization? Examples of lexemes that we might want to discard include
    * whitespace and comments.
    */
-  bool isSignificantToTokenize() {
-    return (this->flags & LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE) == LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE;
-  };
+  bool isSignificantToTokenize() { return this->checkFlag(LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE); };
 
   /**
    * Does this lexeme represent a data type? eg. `int`
    */
-  bool isDataType() { return (this->flags & LEXEMEFLAG_DATA_TYPE) == LEXEMEFLAG_DATA_TYPE; };
+  bool isDataType() { return this->checkFlag(LEXEMEFLAG_DATA_TYPE); };
 
   /**
    * Does this lexeme represent a binary operator? i.e. one with a left and
    * right operand.
    */
-  bool isBinaryOperator() {
-    return (this->flags & LEXEMEFLAG_BINARY_OPERATOR) == LEXEMEFLAG_BINARY_OPERATOR;
-  };
+  bool isBinaryOperator() { return this->checkFlag(LEXEMEFLAG_BINARY_OPERATOR); };
 
   /**
    * Is this lexeme a literal value?
    */
-  bool isLiteral() { return (this->flags & LEXEMEFLAG_LITERAL) == LEXEMEFLAG_LITERAL; }
+  bool isLiteral() { return this->checkFlag(LEXEMEFLAG_LITERAL); }
 
   /**
    * Does this lexeme represent a reserved keyword that we want to restrict
@@ -86,39 +82,39 @@ struct LexemeMetadata {
    * Of major use in the tokenizer to handle the case where our identifier
    * lexeme overzealously tries to match one of our internal keywords.
    */
-  bool isReservedKeyword() {
-    return (this->flags & LEXEMEFLAG_RESERVED_KEYWORD) == LEXEMEFLAG_RESERVED_KEYWORD;
-  }
+  bool isReservedKeyword() { return this->checkFlag(LEXEMEFLAG_RESERVED_KEYWORD); }
 
   /**
    * Does this lexeme represent a unary operator? i.e. one with only a right
    * operand.
    */
-  bool isUnaryOperator() {
-    return (this->flags & LEXEMEFLAG_UNARY_OPERATOR) == LEXEMEFLAG_UNARY_OPERATOR;
-  };
+  bool isUnaryOperator() { return this->checkFlag(LEXEMEFLAG_UNARY_OPERATOR); };
+
+  /**
+   * Does this lexeme represent a logical operator? i.e. one which always
+   * returns boolean
+   */
+  bool isLogicalOperator() { return this->checkFlag(LEXEMEFLAG_LOGICAL_OPERATOR); }
 
   /**
    * Does this lexeme represent an assignment operator? i.e. is it used to
    * assign the result of a right-hand-side expression to some variable?
    */
-  bool isAssignmentOperator() {
-    return (this->flags & LEXEMEFLAG_ASSIGNMENT_OPERATOR) == LEXEMEFLAG_ASSIGNMENT_OPERATOR;
-  };
+  bool isAssignmentOperator() { return this->checkFlag(LEXEMEFLAG_ASSIGNMENT_OPERATOR); };
 
   /**
    * Does this lexeme in some way modify a variable declaration? eg. Does
    * it mark a variable as mutable?
    */
-  bool isVariableModifier() {
-    return (this->flags & LEXEMEFLAG_VARIABLE_MODIFIER) == LEXEMEFLAG_VARIABLE_MODIFIER;
-  };
+  bool isVariableModifier() { return this->checkFlag(LEXEMEFLAG_VARIABLE_MODIFIER); };
 
   /**
    * Is this lexeme assignable to a given literal type? This lexeme is a data
    * type, and that data type can hold a literal value of the provided type.
    *
    * eg. Bool variable can hold a bool literal.
+   *
+   * TODO: I'm pretty sure this and related code in lexemes.cpp can be removed
    */
   bool isAssignableToLiteralType(LexemeType literalType) {
     return this->literalType.has_value() && this->literalType.value() == literalType;
@@ -165,6 +161,9 @@ struct LexemeMetadata {
                                "value types. Please provide at least one corresponding data type.");
     }
   }
+
+private:
+  bool checkFlag(int flag) { return (this->flags & flag) == flag; }
 };
 
 #endif

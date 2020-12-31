@@ -5,13 +5,6 @@
 #include "type_error.h"
 #include "uninferrable_type_error.h"
 
-/*
- * TODO: Instead of throwing errors on failures, collect errors into an array,
- * eg. std::shared_ptr<TypecheckerError>[], and return that. Will allow us to
- * report on all type errors at once regardless of the number of issues. Much
- * easier to debug problems.
- */
-
 Typechecker::Typechecker(std::shared_ptr<BlockStatement> ast) {
   this->ast = ast;
   this->identifierTable = IdentifierTable();
@@ -23,8 +16,6 @@ std::vector<std::shared_ptr<TypecheckerError>> Typechecker::check() {
   return this->errors;
 }
 
-// TODO: Certain binary operators will always return a fixed expression type,
-// eg. &&
 void Typechecker::visitBinaryOperatorExpression(BinaryOperatorExpression &node) {
   node.lhs->acceptAstVisitor(*this);
   auto lhsType = this->latestVisitedType;
@@ -32,8 +23,24 @@ void Typechecker::visitBinaryOperatorExpression(BinaryOperatorExpression &node) 
   node.rhs->acceptAstVisitor(*this);
   auto rhsType = this->latestVisitedType;
 
+  auto operatorType = node.binaryOperator;
+  auto metadataForOperator = Lexemes::getInstance().getMetadata().at(operatorType);
+
+  if (metadataForOperator.isLogicalOperator()) {
+    if (lhsType != LexemeType::BOOLEAN_LITERAL) {
+      this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
+                                                         LexemeType::BOOLEAN_LITERAL, lhsType));
+    }
+
+    if (rhsType != LexemeType::BOOLEAN_LITERAL) {
+      this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
+                                                         LexemeType::BOOLEAN_LITERAL, rhsType));
+    }
+  }
+
   if (lhsType != rhsType) {
-    throw TypeError(node.getLine(), node.getColumn(), lhsType, rhsType);
+    this->errors.push_back(
+      std::make_shared<TypeError>(node.getLine(), node.getColumn(), lhsType, rhsType));
   }
 }
 

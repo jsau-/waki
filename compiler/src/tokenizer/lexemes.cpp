@@ -122,10 +122,12 @@ Lexemes::Lexemes() {
                     "!=", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
     {LexemeType::LOGICAL_AND,
      LexemeMetadata("logical and", std::regex("&&"), "&&",
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR |
+                      LEXEMEFLAG_LOGICAL_OPERATOR)},
     {LexemeType::LOGICAL_OR,
      LexemeMetadata("logical or", std::regex("\\|\\|"), "||",
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR |
+                      LEXEMEFLAG_LOGICAL_OPERATOR)},
     {LexemeType::BITWISE_AND,
      LexemeMetadata("bitwise and", std::regex("&"), "&",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
@@ -195,7 +197,8 @@ Lexemes::Lexemes() {
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
     {LexemeType::NOT,
      LexemeMetadata("logical not", std::regex("!"), "!",
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR |
+                      LEXEMEFLAG_LOGICAL_OPERATOR | LEXEMEFLAG_LOGICAL_OPERATOR)},
     {LexemeType::BITWISE_NOT,
      LexemeMetadata("bitwise not", std::regex("~"), "~",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},

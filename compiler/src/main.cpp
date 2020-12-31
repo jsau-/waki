@@ -24,7 +24,7 @@ string stringystroo = 'Wow. This is a string!';
 
 // myBinaryOp = 10 + 20;
 
-myOtherBinaryOp = (((10 += 2) && 7)) || 30;
+myOtherBinaryOp = (((true) && false)) || false;
   )"""";
 
   std::cout << "Instantiating tokenizer" << std::endl;

@@ -33,19 +33,25 @@
 // This lexeme represents a unary operator
 #define LEXEMEFLAG_UNARY_OPERATOR 8
 
+/*
+ * This lexeme represents a logical operator, i.e. one which always returns a
+ * boolean value.
+ */
+#define LEXEMEFLAG_LOGICAL_OPERATOR 16
+
 // This lexeme represents an assignment operator
-#define LEXEMEFLAG_ASSIGNMENT_OPERATOR 16
+#define LEXEMEFLAG_ASSIGNMENT_OPERATOR 32
 
 // This lexeme represents a variable modifier
-#define LEXEMEFLAG_VARIABLE_MODIFIER 32
+#define LEXEMEFLAG_VARIABLE_MODIFIER 64
 
 /*
  * This lexeme represents a reserved keyword, and hence the programmer should
  * not be allowed to declare an identifier with its name.
  */
-#define LEXEMEFLAG_RESERVED_KEYWORD 64
+#define LEXEMEFLAG_RESERVED_KEYWORD 128
 
 // This lexeme represents a literal value of any data type
-#define LEXEMEFLAG_LITERAL 128
+#define LEXEMEFLAG_LITERAL 256
 
 #endif
