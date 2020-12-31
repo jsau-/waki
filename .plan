@@ -1,6 +1,2 @@
-* Type-check existing AST
-* Logic-check existing AST (likely phase after parser, eg. checking if we're
-  doing weird assignments like `*=` at declaration time; accessing undeclared
-  identifiers, etc.)
 * Parse function declarations
 * Parse function calls
