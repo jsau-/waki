@@ -17,6 +17,8 @@ Typechecker::Typechecker(std::shared_ptr<BlockStatement> ast) {
 
 void Typechecker::check() { this->visitBlockStatement(*ast); }
 
+// TODO: Certain binary operators will always return a fixed expression type,
+// eg. &&
 void Typechecker::visitBinaryOperatorExpression(BinaryOperatorExpression &node) {
   node.lhs->acceptAstVisitor(*this);
   auto lhsType = this->latestVisitedType;
