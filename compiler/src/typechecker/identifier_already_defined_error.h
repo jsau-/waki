@@ -17,7 +17,8 @@ struct IdentifierAlreadyDefinedError : public TypecheckerError {
                      std::string(", column ") + std::to_string(this->column) +
                      std::string(" has already been declared on line ") +
                      std::to_string(this->lineOriginallyDeclaredAt) + std::string(", column ") +
-                     std::to_string(this->columnOriginallyDeclaredAt);
+                     std::to_string(this->columnOriginallyDeclaredAt)
+                     + std::string(".");
   }
 
   const char *what() const throw() { return this->errorMsg.c_str(); }

@@ -24,7 +24,12 @@ struct Typechecker : public AstVisitor {
   // a root node
   Typechecker(std::shared_ptr<BlockStatement> ast);
 
-  // Check all types in the provided AST, and return all found errors
+  /**
+   * Check all types in the provided AST, and return all found errors.
+   * Note that certain errors may have cascaded as a result of the earliest
+   * error. The programmer should be prompted to address errors in the order
+   * they were presented.
+   */
   std::vector<std::shared_ptr<TypecheckerError>> check();
 
 protected:

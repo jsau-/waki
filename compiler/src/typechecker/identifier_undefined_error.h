@@ -11,7 +11,7 @@ struct IdentifierUndefinedError : public TypecheckerError {
     this->errorMsg = std::string("Identifier '") + this->identifier +
                      std::string("' referenced at line ") + std::to_string(this->line) +
                      std::string(", column ") + std::to_string(this->column) +
-                     std::string(" has not been defined");
+                     std::string(" has not been defined.");
   }
 
   const char *what() const throw() { return this->errorMsg.c_str(); };

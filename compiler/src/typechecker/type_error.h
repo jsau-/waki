@@ -18,7 +18,8 @@ struct TypeError : public TypecheckerError {
     this->errorMsg = std::string("Received unexpected type on line ") + std::to_string(this->line) +
                      std::string(", column ") + std::to_string(this->column) +
                      std::string(". Expected ") + metadataForExpected.displayName +
-                     " but received " + metadataForReceived.displayName;
+                     std::string(" but received ") + metadataForReceived.displayName +
+                     std::string(".");
   }
 
   const char *what() const throw() { return this->errorMsg.c_str(); }
