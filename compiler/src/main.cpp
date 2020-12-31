@@ -10,7 +10,7 @@
 
 int main() {
   auto input = R""""(
-mutable iLiteral = 10;
+iLiteral = 10;
 
 iLiteral = null;
 // Brapadoo! ;;;;;;;;;;;;;;;;;;;

@@ -27,8 +27,7 @@ void Typechecker::visitBinaryOperatorExpression(BinaryOperatorExpression &node) 
   auto rhsType = this->latestVisitedType;
 
   if (lhsType != rhsType) {
-    // TODO: Line numbers
-    throw TypeError(0, 0, lhsType, rhsType);
+    throw TypeError(node.getLine(), node.getColumn(), lhsType, rhsType);
   }
 }
 
@@ -76,9 +75,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
    * we've encountered it (and hence we'll treat it as a declaration)
    */
   if (node.isDeclaration() || !hasIdentifierBeenDefined) {
-    // TODO: Line numbers
     auto identifier = this->identifierTable.defineIdentifier(node.identifier, node.dataType,
-                                                             node.isMutable, node.isNullable, 0, 0);
+                                                             node.isMutable, node.isNullable, node.getLine(), node.getColumn());
 
     /*
      * As part of a variable declaration, if no type were provided, eg. code
@@ -123,7 +121,7 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
         LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
 
       if (isExpressionUnassignable || areNullChecksViolated) {
-        throw TypeError(0, 0, identifier.type, expressionType);
+        throw TypeError(node.getLine(), node.getColumn(), identifier.type, expressionType);
       }
     }
     /*
@@ -151,7 +149,7 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
       LexemeType::NULL_LITERAL == expressionType && !existingIdentifier.isNullable;
 
     if (isExpressionUnassignable || areNullChecksViolated) {
-      throw TypeError(0, 0, existingIdentifier.type, expressionType);
+      throw TypeError(node.getLine(), node.getColumn(), existingIdentifier.type, expressionType);
     }
   }
 }
