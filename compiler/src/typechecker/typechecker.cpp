@@ -17,7 +17,11 @@ Typechecker::Typechecker(std::shared_ptr<BlockStatement> ast) {
   this->identifierTable = IdentifierTable();
 }
 
-void Typechecker::check() { this->visitBlockStatement(*ast); }
+std::vector<std::shared_ptr<TypecheckerError>> Typechecker::check() {
+  this->errors = {};
+  this->visitBlockStatement(*ast);
+  return this->errors;
+}
 
 // TODO: Certain binary operators will always return a fixed expression type,
 // eg. &&
@@ -95,8 +99,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
      */
     if (!this->identifierTable.isIdentifierOfKnownType(identifier.name)) {
       if (lexemeMetadataForExpressionType.dataTypes.size() > 1) {
-        throw UninferrableTypeError(identifier.name, node.getLine(), node.getColumn(),
-                                    expressionType);
+        this->errors.push_back(std::make_shared<UninferrableTypeError>(
+          identifier.name, node.getLine(), node.getColumn(), expressionType));
       }
 
       // TODO: Logic duplicated below
@@ -106,7 +110,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
         LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
 
       if (areNullChecksViolated) {
-        throw TypeError(node.getLine(), node.getColumn(), inferredIdentifierType, expressionType);
+        this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
+                                                           inferredIdentifierType, expressionType));
       }
 
       this->identifierTable.setIdentifierType(identifier.name, inferredIdentifierType);
@@ -122,7 +127,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
         LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
 
       if (isExpressionUnassignable || areNullChecksViolated) {
-        throw TypeError(node.getLine(), node.getColumn(), identifier.type, expressionType);
+        this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
+                                                           identifier.type, expressionType));
       }
     }
     /*
@@ -134,7 +140,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
     auto existingIdentifier = this->identifierTable.getIdentifierForName(node.identifier);
 
     if (!this->identifierTable.isIdentifierMutable(existingIdentifier.name)) {
-      throw MutabilityViolationError(existingIdentifier.name, node.getLine(), node.getColumn());
+      this->errors.push_back(std::make_shared<MutabilityViolationError>(
+        existingIdentifier.name, node.getLine(), node.getColumn()));
     }
 
     auto lexemeMetadataForIdentifier = lexemeMetadata.at(existingIdentifier.type);
@@ -149,7 +156,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
       LexemeType::NULL_LITERAL == expressionType && !existingIdentifier.isNullable;
 
     if (isExpressionUnassignable || areNullChecksViolated) {
-      throw TypeError(node.getLine(), node.getColumn(), existingIdentifier.type, expressionType);
+      this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
+                                                         existingIdentifier.type, expressionType));
     }
   }
 }

@@ -41,8 +41,8 @@ myOtherBinaryOp = (((10 += 2) && 7)) || 30;
   auto lexemeMetadata = Lexemes::getInstance().getMetadata();
 
   for (auto const &token : tokens) {
-    std::cout << "Token: " << lexemeMetadata.at(token.type).displayName << " ("
-              << (int)token.type << ")"
+    std::cout << "Token: " << lexemeMetadata.at(token.type).displayName << " (" << (int)token.type
+              << ")"
               << " | value '" << token.value << "' | line number " << token.lineNumber
               << " | column number " << token.columnNumber << std::endl;
   }
@@ -67,7 +67,14 @@ myOtherBinaryOp = (((10 += 2) && 7)) || 30;
 
   auto typechecker = Typechecker(ast);
 
-  typechecker.check();
+  auto typeErrors = typechecker.check();
+
+  std::cout << "Received " << typeErrors.size() << " type error(s)" << std::endl;
+
+  for (const auto &typeError : typeErrors) {
+    std::cout << "Line: " << typeError->getLine() << ", column: " << typeError->getColumn() << "; "
+              << typeError->what() << std::endl;
+  }
 
   return 0;
 }

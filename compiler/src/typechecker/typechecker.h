@@ -2,6 +2,7 @@
 #define waki_typechecker_typechecker
 
 #include <memory>
+#include <vector>
 
 #include "../parser/ast_visitor.h"
 #include "../parser/expressions/binary_operator_expression.h"
@@ -16,14 +17,15 @@
 #include "../parser/statements/variable_assignment_statement.h"
 #include "identifier.h"
 #include "identifier_table.h"
+#include "typechecker_error.h"
 
 struct Typechecker : public AstVisitor {
   // TODO: Should probably actually have some type properly denoting this is
   // a root node
   Typechecker(std::shared_ptr<BlockStatement> ast);
 
-  // Check all types in the provided AST
-  void check();
+  // Check all types in the provided AST, and return all found errors
+  std::vector<std::shared_ptr<TypecheckerError>> check();
 
 protected:
   virtual void visitBinaryOperatorExpression(BinaryOperatorExpression &node) override;
@@ -40,6 +42,7 @@ protected:
 
 private:
   std::shared_ptr<BlockStatement> ast;
+  std::vector<std::shared_ptr<TypecheckerError>> errors;
   IdentifierTable identifierTable;
 
   // Cached type of the most recently visited node
