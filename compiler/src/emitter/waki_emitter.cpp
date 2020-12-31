@@ -44,7 +44,8 @@ void WakiEmitter::visitIdentifierExpression(IdentifierExpression &node) {
 
 void WakiEmitter::visitNullLiteralExpression() {
   auto lexemesMetadata = Lexemes::getInstance().getMetadata();
-  this->sourceStream << lexemesMetadata.at(LexemeType::NULL_LITERAL).codeRepresentation.value_or("");
+  this->sourceStream
+    << lexemesMetadata.at(LexemeType::NULL_LITERAL).codeRepresentation.value_or("");
 }
 
 void WakiEmitter::visitSignedInt32LiteralExpression(SignedInt32LiteralExpression &node) {
@@ -65,11 +66,13 @@ void WakiEmitter::visitVariableAssignmentStatement(VariableAssignmentStatement &
   auto lexemesMetadata = Lexemes::getInstance().getMetadata();
 
   if (node.isMutable) {
-    this->sourceStream << lexemesMetadata.at(LexemeType::MUTABLE).codeRepresentation.value_or("") << " ";
+    this->sourceStream << lexemesMetadata.at(LexemeType::MUTABLE).codeRepresentation.value_or("")
+                       << " ";
   }
 
   if (node.isNullable) {
-    this->sourceStream << lexemesMetadata.at(LexemeType::NULLABLE).codeRepresentation.value_or("") << " ";
+    this->sourceStream << lexemesMetadata.at(LexemeType::NULLABLE).codeRepresentation.value_or("")
+                       << " ";
   }
 
   if (lexemesMetadata.at(node.dataType).codeRepresentation.has_value()) {

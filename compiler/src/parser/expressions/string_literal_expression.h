@@ -1,5 +1,5 @@
 #ifndef waki_parser_expressions_string_literal_expression
-#define wkai_parser_expressions_string_literal_expression
+#define waki_parser_expressions_string_literal_expression
 
 #include <string>
 #include "expression.h"

@@ -62,10 +62,22 @@ Token Tokenizer::nextMatch() {
        * keyword.
        *
        * This stops people from using our own keywords in naughty ways!
+       *
+       * TODO: We can probably tidy this up a bit!
        */
-      if (tokenType == LexemeType::IDENTIFIER &&
-          reservedKeywords.find(tokenValue) != reservedKeywords.end()) {
-        tokenType = reservedKeywords.at(tokenValue);
+      if (tokenType == LexemeType::IDENTIFIER) {
+        for (const auto &reservedKeyword : reservedKeywords) {
+          std::smatch reservedMatches;
+
+          if (std::regex_search(tokenValue, reservedMatches,
+                                reservedKeyword.second,
+                                std::regex_constants::match_continuous)) {
+            if (reservedMatches[0].str() == tokenValue) {
+              tokenType = reservedKeyword.first;
+              break;
+            }
+          }
+        }
       }
 
       this->eatChars(tokenValue.length());

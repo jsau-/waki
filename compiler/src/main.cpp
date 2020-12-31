@@ -6,12 +6,15 @@
 #include "tokenizer/lexemes.h"
 #include "tokenizer/token.h"
 #include "tokenizer/tokenizer.h"
+#include "typechecker/typechecker.h"
 
 int main() {
   auto input = R""""(
 float fLiteral = 30.0040f;
 
 iLiteral += 20;
+
+iLiteral = 30;
 // Brapadoo! ;;;;;;;;;;;;;;;;;;;
 
 mutable bool bLiteral = false;
@@ -21,11 +24,9 @@ dLiteral *= -10.0d;
 
 string stringystroo = 'Wow. This is a string!';
 
-nullable naughtyVar = null;
-
 // myBinaryOp = 10 + 20;
 
-myOtherBinaryOp = (((10 += 2) && naughtyVar)) || 30;
+myOtherBinaryOp = (((10 += 2) && 7)) || 30;
   )"""";
 
   std::cout << "Instantiating tokenizer" << std::endl;
@@ -64,7 +65,11 @@ myOtherBinaryOp = (((10 += 2) && naughtyVar)) || 30;
   std::cout << std::endl << "Emitted source:" << std::endl;
   std::cout << "---------------------------" << std::endl;
 
-  std::cout << wakiEmitter.source();
+  std::cout << wakiEmitter.source() << std::endl << std::endl;
+
+  auto typechecker = Typechecker(ast);
+
+  typechecker.check();
 
   return 0;
 }

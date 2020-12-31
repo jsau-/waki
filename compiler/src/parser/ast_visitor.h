@@ -16,6 +16,10 @@ struct StringLiteralExpression;
 struct BlockStatement;
 struct VariableAssignmentStatement;
 
+// TODO: Currently we just treat BlockStatement as our primary node; I think
+// we should just define a ProgramStatement or something (which is effectively
+// a BlockStatement), or in the least something to make it more clear that
+// our concept of an AST is a BlockStatement.
 struct AstVisitor {
   virtual ~AstVisitor(){};
 

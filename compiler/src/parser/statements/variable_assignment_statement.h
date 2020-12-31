@@ -59,6 +59,15 @@ struct VariableAssignmentStatement : Statement {
   virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitVariableAssignmentStatement(*this);
   };
+
+  /*
+   * Is this variable assignment definitely a declaration statement?
+   * We only expect this to be the case where we have an explicit declaration
+   * type, or a modifier word was provided.
+   */
+  bool isDeclaration() {
+    return this->isMutable || this->isNullable || this->dataType != LexemeType::UNKNOWN;
+  }
 };
 
 #endif
