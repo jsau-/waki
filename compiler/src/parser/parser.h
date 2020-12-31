@@ -1,6 +1,7 @@
 #ifndef waki_parser_parser
 #define waki_parser_parser
 
+#include <optional.h>
 #include <memory>
 #include <set>
 
@@ -122,7 +123,7 @@ private:
   std::shared_ptr<Expression> parseMultiplicativeExpression();
   std::shared_ptr<Expression> parsePrimaryExpression();
 
-  std::shared_ptr<Statement> parseStatement();
+  tl::optional<std::shared_ptr<Statement>> parseStatement();
   std::shared_ptr<Statement> parseVariableAssignmentStatement();
 
   bool isAtEnd();

@@ -43,13 +43,8 @@ std::shared_ptr<BlockStatement> Parser::parse() {
      */
     auto parseResult = this->parseStatement();
 
-    /*
-     * parseStatement returns nullptr if there was nothing to do (eg. we
-     * reached the end as part of the current parse iteration), hence the need
-     * to explicitly check it's actually a valid ptr.
-     */
-    if (parseResult) {
-      rootBlock->statements.push_back(parseResult);
+    if (parseResult.has_value()) {
+      rootBlock->statements.push_back(*parseResult);
     }
   }
 
@@ -371,10 +366,9 @@ std::shared_ptr<Expression> Parser::parsePrimaryExpression() {
   return literalExpression;
 }
 
-std::shared_ptr<Statement> Parser::parseStatement() {
+tl::optional<std::shared_ptr<Statement>> Parser::parseStatement() {
   if (this->isAtEnd()) {
-    // TODO: Should we be using `make_shared<SomeDerviedStatement>(nullptr)`?
-    return nullptr;
+    return tl::nullopt;
   }
 
   /*
@@ -386,7 +380,8 @@ std::shared_ptr<Statement> Parser::parseStatement() {
     return this->parseStatement();
   }
 
-  return this->parseVariableAssignmentStatement();
+  auto statement = tl::optional<std::shared_ptr<Statement>>(this->parseVariableAssignmentStatement());
+  return statement;
 }
 
 std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
@@ -429,10 +424,6 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
 
   auto operatorToken = this->assertCurrentTokenTypeAndAdvance(assignOperators);
 
-  /*
-   * TODO: Make sure typechecker actually checks this stuff is sensible.
-   * eg. it doesn't make sense to do `bool += true`. That way madness lies.
-   */
   auto expression = this->parseExpression();
 
   this->assertCurrentTokenTypeAndAdvance(LexemeType::END_OF_STATEMENT);
