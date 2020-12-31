@@ -1,7 +1,9 @@
 #include "typechecker.h"
 #include "../tokenizer/lexemes.h"
 #include "identifier_undefined_error.h"
+#include "mutability_violation_error.h"
 #include "type_error.h"
+#include "uninferrable_type_error.h"
 
 /*
  * TODO: Instead of throwing errors on failures, collect errors into an array,
@@ -75,8 +77,9 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
    * we've encountered it (and hence we'll treat it as a declaration)
    */
   if (node.isDeclaration() || !hasIdentifierBeenDefined) {
-    auto identifier = this->identifierTable.defineIdentifier(node.identifier, node.dataType,
-                                                             node.isMutable, node.isNullable, node.getLine(), node.getColumn());
+    auto identifier =
+      this->identifierTable.defineIdentifier(node.identifier, node.dataType, node.isMutable,
+                                             node.isNullable, node.getLine(), node.getColumn());
 
     /*
      * As part of a variable declaration, if no type were provided, eg. code
@@ -92,20 +95,18 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
      */
     if (!this->identifierTable.isIdentifierOfKnownType(identifier.name)) {
       if (lexemeMetadataForExpressionType.dataTypes.size() > 1) {
-        // TODO: Proper error
-        // TODO: When doing proper error, include information!
-        throw std::runtime_error(
-          "Unable to infer data type. Literal type XXX TODO XXX is assignable to multiple data "
-          "types. You must define an explicit data type.");
+        throw UninferrableTypeError(identifier.name, node.getLine(), node.getColumn(),
+                                    expressionType);
       }
 
+      // TODO: Logic duplicated below
       auto inferredIdentifierType = *lexemeMetadataForExpressionType.dataTypes.begin();
 
-      if (!this->identifierTable.isIdentifierNullable(identifier.name) &&
-          LexemeType::NULL_LITERAL == expressionType) {
-        // TODO: Proper error
-        throw std::runtime_error(
-          "Attempting to assign null literal to an identifier which is not nullable.");
+      auto areNullChecksViolated =
+        LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
+
+      if (areNullChecksViolated) {
+        throw TypeError(node.getLine(), node.getColumn(), inferredIdentifierType, expressionType);
       }
 
       this->identifierTable.setIdentifierType(identifier.name, inferredIdentifierType);
@@ -133,8 +134,7 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
     auto existingIdentifier = this->identifierTable.getIdentifierForName(node.identifier);
 
     if (!this->identifierTable.isIdentifierMutable(existingIdentifier.name)) {
-      // TODO: Proper error
-      throw std::runtime_error("Attempting to mutate a non-mutable identifier.");
+      throw MutabilityViolationError(existingIdentifier.name, node.getLine(), node.getColumn());
     }
 
     auto lexemeMetadataForIdentifier = lexemeMetadata.at(existingIdentifier.type);

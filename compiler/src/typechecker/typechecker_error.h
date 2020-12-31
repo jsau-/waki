@@ -15,6 +15,9 @@ struct TypecheckerError : public std::exception {
 
   virtual ~TypecheckerError(){};
 
+  uint64_t getLine() { return this->line; }
+  uint64_t getColumn() { return this->column; }
+
 protected:
   // The identifier name the typechecker error occurred for.
   std::string identifier;
