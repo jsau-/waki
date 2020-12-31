@@ -12,9 +12,10 @@
 struct DoubleLiteralExpression : Expression {
   double value;
 
-  DoubleLiteralExpression(double value) : value(value) {}
+  DoubleLiteralExpression(uint64_t line, uint64_t column, double value)
+    : Expression(line, column), value(value) {}
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitDoubleLiteralExpression(*this);
   };
 };

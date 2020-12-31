@@ -12,9 +12,10 @@
 struct BoolLiteralExpression : Expression {
   bool value;
 
-  BoolLiteralExpression(bool value) : value(value){};
+  BoolLiteralExpression(uint64_t line, uint64_t column, bool value)
+    : Expression(line, column), value(value){};
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitBoolLiteralExpression(*this);
   };
 };

@@ -12,9 +12,10 @@
 struct FloatLiteralExpression : Expression {
   float value;
 
-  FloatLiteralExpression(float value) : value(value) {}
+  FloatLiteralExpression(uint64_t line, uint64_t column, float value)
+    : Expression(line, column), value(value) {}
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitFloatLiteralExpression(*this);
   };
 };

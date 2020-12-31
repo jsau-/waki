@@ -26,9 +26,9 @@ struct BinaryOperatorExpression : Expression {
   std::shared_ptr<Expression> lhs;
   std::shared_ptr<Expression> rhs;
 
-  BinaryOperatorExpression(LexemeType binaryOperator, std::shared_ptr<Expression> lhs,
-                           std::shared_ptr<Expression> rhs)
-    : binaryOperator(binaryOperator), lhs(lhs), rhs(rhs) {
+  BinaryOperatorExpression(uint64_t line, uint64_t column, LexemeType binaryOperator,
+                           std::shared_ptr<Expression> lhs, std::shared_ptr<Expression> rhs)
+    : Expression(line, column), binaryOperator(binaryOperator), lhs(lhs), rhs(rhs) {
     auto binaryOperators = Lexemes::getInstance().getBinaryOperators();
 
     if (binaryOperators.find(binaryOperator) == binaryOperators.end()) {

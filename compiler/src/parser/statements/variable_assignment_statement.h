@@ -27,11 +27,11 @@ struct VariableAssignmentStatement : Statement {
   bool isMutable;
   bool isNullable;
 
-  VariableAssignmentStatement(uint64_t lineDeclared, uint64_t columnDeclared, LexemeType dataType,
+  VariableAssignmentStatement(uint64_t line, uint64_t column, LexemeType dataType,
                               std::string identifier, LexemeType assignmentOperator,
                               std::shared_ptr<Expression> expression, bool isMutable = false,
                               bool isNullable = false)
-    : Statement(lineDeclared, columnDeclared), dataType(dataType),
+    : Statement(line, column), dataType(dataType),
       identifier(identifier), assignmentOperator(assignmentOperator), expression(expression),
       isMutable(isMutable), isNullable(isNullable) {
     auto lexemes = Lexemes::getInstance();

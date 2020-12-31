@@ -4,6 +4,7 @@
 #include "../ast_node.h"
 
 struct Expression : AstNode {
+  Expression(uint64_t line, uint64_t column) : AstNode(line, column) {}
   virtual ~Expression(){};
 };
 

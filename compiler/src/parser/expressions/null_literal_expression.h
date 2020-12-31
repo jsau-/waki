@@ -10,7 +10,9 @@
  *                                |
  */
 struct NullLiteralExpression : Expression {
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  NullLiteralExpression(uint64_t line, uint64_t column) : Expression(line, column){};
+
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitNullLiteralExpression();
   };
 };

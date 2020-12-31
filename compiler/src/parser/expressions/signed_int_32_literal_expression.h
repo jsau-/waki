@@ -14,9 +14,10 @@
 struct SignedInt32LiteralExpression : Expression {
   std::int32_t value;
 
-  SignedInt32LiteralExpression(std::int32_t value) : value(value){};
+  SignedInt32LiteralExpression(uint64_t line, uint64_t column, std::int32_t value)
+    : Expression(line, column), value(value){};
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitSignedInt32LiteralExpression(*this);
   };
 };

@@ -1,8 +1,8 @@
 #ifndef waki_parser_expressions_identifier_expression
 #define waki_parser_expressions_identifier_expression
 
-#include <string>
 #include "expression.h"
+#include <string>
 
 /**
  * Represents an expression referencing an identifier.
@@ -17,9 +17,10 @@
 struct IdentifierExpression : Expression {
   std::string identifier;
 
-  IdentifierExpression(std::string identifier) : identifier(identifier) {};
+  IdentifierExpression(uint64_t line, uint64_t column, std::string identifier)
+    : Expression(line, column), identifier(identifier){};
 
-  virtual void acceptAstVisitor(AstVisitor& visitor) override {
+  virtual void acceptAstVisitor(AstVisitor &visitor) override {
     visitor.visitIdentifierExpression(*this);
   };
 };
