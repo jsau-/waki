@@ -16,17 +16,18 @@ void IdentifierTable::assertIdentifierUndefined(std::string identifierName) {
     auto existingIdentifier = this->getIdentifierForName(identifierName);
 
     // TODO: Line numbers
-    throw IdentifierAlreadyDefinedError(identifierName, 0, 0,
-                                        existingIdentifier.lineDeclared,
+    throw IdentifierAlreadyDefinedError(identifierName, 0, 0, existingIdentifier.lineDeclared,
                                         existingIdentifier.columnDeclared);
   }
 }
 
 Identifier IdentifierTable::defineIdentifier(std::string identifierName, LexemeType lexemeType,
-                                             uint64_t lineDeclared, uint64_t columnDeclared) {
+                                             bool isMutable, bool isNullable, uint64_t lineDeclared,
+                                             uint64_t columnDeclared) {
   this->assertIdentifierUndefined(identifierName);
 
-  auto identifier = Identifier(identifierName, lexemeType, lineDeclared, columnDeclared);
+  auto identifier =
+    Identifier(identifierName, lexemeType, isMutable, isNullable, lineDeclared, columnDeclared);
 
   this->identifiers.emplace(identifierName, identifier);
 
@@ -50,6 +51,16 @@ bool IdentifierTable::isIdentifierDefined(std::string identifierName) {
 bool IdentifierTable::isIdentifierOfKnownType(std::string identifierName) {
   auto identifier = this->getIdentifierForName(identifierName);
   return identifier.type != LexemeType::UNKNOWN;
+}
+
+bool IdentifierTable::isIdentifierMutable(std::string identifierName) {
+  auto identifier = this->getIdentifierForName(identifierName);
+  return identifier.isMutable;
+}
+
+bool IdentifierTable::isIdentifierNullable(std::string identifierName) {
+  auto identifier = this->getIdentifierForName(identifierName);
+  return identifier.isNullable;
 }
 
 void IdentifierTable::setIdentifierType(std::string identifierName, LexemeType type) {

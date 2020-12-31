@@ -16,7 +16,7 @@ struct IdentifierTable {
   IdentifierTable();
 
   // Define a found identifier in the AST
-  Identifier defineIdentifier(std::string identifierName, LexemeType lexemeType, uint64_t lineDeclared, uint64_t columnDeclared);
+  Identifier defineIdentifier(std::string identifierName, LexemeType lexemeType, bool isMutable, bool isNullable, uint64_t lineDeclared, uint64_t columnDeclared);
 
   // Gets the datastructure representing an identifier for a given name.
   Identifier getIdentifierForName(std::string identifierName);
@@ -30,6 +30,12 @@ struct IdentifierTable {
   // Is the identifier of a known type? Used to determine if we should
   // over-write based on
   bool isIdentifierOfKnownType(std::string identifierName);
+
+  // Is the identifier mutable?
+  bool isIdentifierMutable(std::string identifierName);
+
+  // Is the identifier nullable?
+  bool isIdentifierNullable(std::string identifierName);
 
   // Set the type of an identifier
   void setIdentifierType(std::string identifierName, LexemeType type);

@@ -1,7 +1,14 @@
+#include "typechecker.h"
 #include "../tokenizer/lexemes.h"
 #include "identifier_undefined_error.h"
 #include "type_error.h"
-#include "typechecker.h"
+
+/*
+ * TODO: Instead of throwing errors on failures, collect errors into an array,
+ * eg. std::shared_ptr<TypecheckerError>[], and return that. Will allow us to
+ * report on all type errors at once regardless of the number of issues. Much
+ * easier to debug problems.
+ */
 
 Typechecker::Typechecker(std::shared_ptr<BlockStatement> ast) {
   this->ast = ast;
@@ -68,7 +75,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
    */
   if (node.isDeclaration() || !hasIdentifierBeenDefined) {
     // TODO: Line numbers
-    auto identifier = this->identifierTable.defineIdentifier(node.identifier, node.dataType, 0, 0);
+    auto identifier = this->identifierTable.defineIdentifier(node.identifier, node.dataType,
+                                                             node.isMutable, node.isNullable, 0, 0);
 
     /*
      * As part of a variable declaration, if no type were provided, eg. code
@@ -85,6 +93,7 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
     if (!this->identifierTable.isIdentifierOfKnownType(identifier.name)) {
       if (lexemeMetadataForExpressionType.dataTypes.size() > 1) {
         // TODO: Proper error
+        // TODO: When doing proper error, include information!
         throw std::runtime_error(
           "Unable to infer data type. Literal type XXX TODO XXX is assignable to multiple data "
           "types. You must define an explicit data type.");
@@ -92,13 +101,26 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
 
       auto inferredIdentifierType = *lexemeMetadataForExpressionType.dataTypes.begin();
 
+      if (!this->identifierTable.isIdentifierNullable(identifier.name) &&
+          LexemeType::NULL_LITERAL == expressionType) {
+        // TODO: Proper error
+        throw std::runtime_error(
+          "Attempting to assign null literal to an identifier which is not nullable.");
+      }
+
       this->identifierTable.setIdentifierType(identifier.name, inferredIdentifierType);
       /*
        * If an explicit type _were_ set on the identifier, we need to assert that
        * the RHS expression is assignable to its type.
        */
     } else {
-      if (!lexemeMetadataForExpressionType.isAssignableToDataType(identifier.type)) {
+      // TODO: Logic duplicated below
+      auto isExpressionUnassignable =
+        !lexemeMetadataForExpressionType.isAssignableToDataType(identifier.type);
+      auto areNullChecksViolated =
+        LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
+
+      if (isExpressionUnassignable || areNullChecksViolated) {
         throw TypeError(0, 0, identifier.type, expressionType);
       }
     }
@@ -109,12 +131,24 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
      */
   } else {
     auto existingIdentifier = this->identifierTable.getIdentifierForName(node.identifier);
+
+    if (!this->identifierTable.isIdentifierMutable(existingIdentifier.name)) {
+      // TODO: Proper error
+      throw std::runtime_error("Attempting to mutate a non-mutable identifier.");
+    }
+
     auto lexemeMetadataForIdentifier = lexemeMetadata.at(existingIdentifier.type);
 
     node.expression->acceptAstVisitor(*this);
     auto expressionType = this->latestVisitedType;
+    auto lexemeMetadataForExpression = lexemeMetadata.at(expressionType);
 
-    if (!lexemeMetadataForIdentifier.isAssignableToLiteralType(expressionType)) {
+    auto isExpressionUnassignable =
+      !lexemeMetadataForExpression.isAssignableToDataType(existingIdentifier.type);
+    auto areNullChecksViolated =
+      LexemeType::NULL_LITERAL == expressionType && !existingIdentifier.isNullable;
+
+    if (isExpressionUnassignable || areNullChecksViolated) {
       throw TypeError(0, 0, existingIdentifier.type, expressionType);
     }
   }

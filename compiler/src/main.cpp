@@ -10,11 +10,9 @@
 
 int main() {
   auto input = R""""(
-float fLiteral = 30.0040f;
+mutable iLiteral = 10;
 
-iLiteral += 20;
-
-iLiteral = 30;
+iLiteral = null;
 // Brapadoo! ;;;;;;;;;;;;;;;;;;;
 
 mutable bool bLiteral = false;
