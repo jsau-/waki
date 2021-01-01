@@ -5,14 +5,14 @@
 IdentifierTable::IdentifierTable() { this->identifiers = std::map<std::string, Identifier>(); }
 
 void IdentifierTable::assertIdentifierDefined(std::string identifierName, uint64_t line,
-                                              uint64_t column) {
+                                              uint64_t column) const {
   if (!this->isIdentifierDefined(identifierName)) {
     throw IdentifierUndefinedError(identifierName, line, column);
   }
 }
 
 void IdentifierTable::assertIdentifierUndefined(std::string identifierName, uint64_t line,
-                                                uint64_t column) {
+                                                uint64_t column) const {
   if (this->isIdentifierDefined(identifierName)) {
     auto existingIdentifier = this->getIdentifierForName(identifierName, line, column);
 
@@ -35,35 +35,35 @@ Identifier IdentifierTable::defineIdentifier(std::string identifierName, LexemeT
 }
 
 Identifier IdentifierTable::getIdentifierForName(std::string identifierName, uint64_t line,
-                                                 uint64_t column) {
+                                                 uint64_t column) const {
   this->assertIdentifierDefined(identifierName, line, column);
   return this->identifiers.at(identifierName);
 }
 
 LexemeType IdentifierTable::getIdentifierType(std::string identifierName, uint64_t line,
-                                              uint64_t column) {
+                                              uint64_t column) const {
   this->assertIdentifierDefined(identifierName, line, column);
   return this->identifiers.at(identifierName).type;
 }
 
-bool IdentifierTable::isIdentifierDefined(std::string identifierName) {
+bool IdentifierTable::isIdentifierDefined(std::string identifierName) const {
   return this->identifiers.find(identifierName) != this->identifiers.end();
 }
 
 bool IdentifierTable::isIdentifierOfKnownType(std::string identifierName, uint64_t line,
-                                              uint64_t column) {
+                                              uint64_t column) const {
   auto identifier = this->getIdentifierForName(identifierName, line, column);
   return identifier.type != LexemeType::UNKNOWN;
 }
 
 bool IdentifierTable::isIdentifierMutable(std::string identifierName, uint64_t line,
-                                          uint64_t column) {
+                                          uint64_t column) const {
   auto identifier = this->getIdentifierForName(identifierName, line, column);
   return identifier.isMutable;
 }
 
 bool IdentifierTable::isIdentifierNullable(std::string identifierName, uint64_t line,
-                                           uint64_t column) {
+                                           uint64_t column) const {
   auto identifier = this->getIdentifierForName(identifierName, line, column);
   return identifier.isNullable;
 }

@@ -27,16 +27,16 @@ private:
   Token advance();
 
   // Do we have a previous token to inspect?
-  bool hasPreviousToken();
+  bool hasPreviousToken() const ;
 
   // Do we have a next token to inspect?
-  bool hasNextToken();
+  bool hasNextToken() const;
 
   // Throw an error if the current token is not of given type.
-  Token assertCurrentTokenType(LexemeType type);
+  Token assertCurrentTokenType(LexemeType type) const;
 
   // Throw an error if the current token is not one of a set of types.
-  Token assertCurrentTokenType(std::set<LexemeType> types);
+  Token assertCurrentTokenType(std::set<LexemeType> types) const;
 
   /*
    * Throw an error if the current token is not of given type; otherwise
@@ -53,34 +53,34 @@ private:
   Token assertCurrentTokenTypeAndAdvance(std::set<LexemeType> types);
 
   // Is the token we're currently indexed on of given type?
-  bool checkCurrentTokenType(LexemeType type);
+  bool checkCurrentTokenType(LexemeType type) const;
 
   // Is the token we're curently indexed on one of a set of types?
-  bool checkCurrentTokenType(std::set<LexemeType> types);
+  bool checkCurrentTokenType(std::set<LexemeType> types) const;
 
   // Is the token immediately after the one we're indexed on of given type?
-  bool checkNextTokenType(LexemeType type);
+  bool checkNextTokenType(LexemeType type) const;
 
   /*
    * Is the token immediate after the one we're indexed on one of a set of
    * types?
    */
-  bool checkNextTokenType(std::set<LexemeType> types);
+  bool checkNextTokenType(std::set<LexemeType> types) const;
 
   /*
    * Get the previous token to the one we're currently indexed on.
    * TODO: Return tl::optional<Token>
    */
-  Token previousToken();
+  Token previousToken() const;
 
   // Get the token we're currently indexed on.
-  Token currentToken();
+  Token currentToken() const;
 
   /*
    * Get the next token immediately following the one we're indexed on.
    * TODO: Return tl::optional<Token>
    */
-  Token nextToken();
+  Token nextToken() const;
 
   /*
    * NB: The way expression parsing is implemented is we just try to parse
@@ -126,7 +126,7 @@ private:
   tl::optional<std::shared_ptr<Statement>> parseStatement();
   std::shared_ptr<Statement> parseVariableAssignmentStatement();
 
-  bool isAtEnd();
+  bool isAtEnd() const;
 };
 
 #endif

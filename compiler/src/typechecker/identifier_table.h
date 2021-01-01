@@ -16,33 +16,35 @@ struct IdentifierTable {
   IdentifierTable();
 
   // Define a found identifier in the AST
-  Identifier defineIdentifier(std::string identifierName, LexemeType lexemeType, bool isMutable, bool isNullable, uint64_t line, uint64_t column);
+  Identifier defineIdentifier(std::string identifierName, LexemeType lexemeType, bool isMutable,
+                              bool isNullable, uint64_t line, uint64_t column);
 
   // Gets the datastructure representing an identifier for a given name.
-  Identifier getIdentifierForName(std::string identifierName, uint64_t line, uint64_t column);
+  Identifier getIdentifierForName(std::string identifierName, uint64_t line, uint64_t column) const;
 
   // Gets the type of an identifier
-  LexemeType getIdentifierType(std::string identifierName, uint64_t line, uint64_t column);
+  LexemeType getIdentifierType(std::string identifierName, uint64_t line, uint64_t column) const;
 
   // Gets if an identifier with a given name is actually defined
-  bool isIdentifierDefined(std::string identifierName);
+  bool isIdentifierDefined(std::string identifierName) const;
 
   // Is the identifier of a known type? Used to determine if we should
   // over-write based on
-  bool isIdentifierOfKnownType(std::string identifierName, uint64_t line, uint64_t column);
+  bool isIdentifierOfKnownType(std::string identifierName, uint64_t line, uint64_t column) const;
 
   // Is the identifier mutable?
-  bool isIdentifierMutable(std::string identifierName, uint64_t line, uint64_t column);
+  bool isIdentifierMutable(std::string identifierName, uint64_t line, uint64_t column) const;
 
   // Is the identifier nullable?
-  bool isIdentifierNullable(std::string identifierName, uint64_t line, uint64_t column);
+  bool isIdentifierNullable(std::string identifierName, uint64_t line, uint64_t column) const;
 
   // Set the type of an identifier
-  void setIdentifierType(std::string identifierName, LexemeType type, uint64_t line, uint64_t column);
+  void setIdentifierType(std::string identifierName, LexemeType type, uint64_t line,
+                         uint64_t column);
 
 private:
-  void assertIdentifierDefined(std::string identifierName, uint64_t line, uint64_t column);
-  void assertIdentifierUndefined(std::string IdentifierName, uint64_t line, uint64_t column);
+  void assertIdentifierDefined(std::string identifierName, uint64_t line, uint64_t column) const;
+  void assertIdentifierUndefined(std::string IdentifierName, uint64_t line, uint64_t column) const;
 
   std::map<std::string, Identifier> identifiers;
 };

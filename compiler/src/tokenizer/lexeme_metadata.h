@@ -14,6 +14,11 @@
  * Metadata used to augment a known lexeme in the language.
  */
 struct LexemeMetadata {
+  LexemeMetadata(std::string displayName, tl::optional<std::regex> pattern = tl::nullopt,
+                 tl::optional<std::string> codeRepresentation = tl::nullopt,
+                 int flags = LEXEMEFLAG_NONE, tl::optional<LexemeType> literalType = tl::nullopt,
+                 std::set<LexemeType> dataTypes = {});
+
   /**
    * The display name for the lexeme. Useful for presenting error messages,
    * eg. `Expected identifier, but received function return.`
@@ -57,23 +62,23 @@ struct LexemeMetadata {
    * tokenization? Examples of lexemes that we might want to discard include
    * whitespace and comments.
    */
-  bool isSignificantToTokenize() { return this->checkFlag(LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE); };
+  bool isSignificantToTokenize() const;
 
   /**
    * Does this lexeme represent a data type? eg. `int`
    */
-  bool isDataType() { return this->checkFlag(LEXEMEFLAG_DATA_TYPE); };
+  bool isDataType() const;
 
   /**
    * Does this lexeme represent a binary operator? i.e. one with a left and
    * right operand.
    */
-  bool isBinaryOperator() { return this->checkFlag(LEXEMEFLAG_BINARY_OPERATOR); };
+  bool isBinaryOperator() const;
 
   /**
    * Is this lexeme a literal value?
    */
-  bool isLiteral() { return this->checkFlag(LEXEMEFLAG_LITERAL); }
+  bool isLiteral() const;
 
   /**
    * Does this lexeme represent a reserved keyword that we want to restrict
@@ -82,31 +87,31 @@ struct LexemeMetadata {
    * Of major use in the tokenizer to handle the case where our identifier
    * lexeme overzealously tries to match one of our internal keywords.
    */
-  bool isReservedKeyword() { return this->checkFlag(LEXEMEFLAG_RESERVED_KEYWORD); }
+  bool isReservedKeyword() const;
 
   /**
    * Does this lexeme represent a unary operator? i.e. one with only a right
    * operand.
    */
-  bool isUnaryOperator() { return this->checkFlag(LEXEMEFLAG_UNARY_OPERATOR); };
+  bool isUnaryOperator() const;
 
   /**
    * Does this lexeme represent a logical operator? i.e. one which always
    * returns boolean
    */
-  bool isLogicalOperator() { return this->checkFlag(LEXEMEFLAG_LOGICAL_OPERATOR); }
+  bool isLogicalOperator() const;
 
   /**
    * Does this lexeme represent an assignment operator? i.e. is it used to
    * assign the result of a right-hand-side expression to some variable?
    */
-  bool isAssignmentOperator() { return this->checkFlag(LEXEMEFLAG_ASSIGNMENT_OPERATOR); };
+  bool isAssignmentOperator() const;
 
   /**
    * Does this lexeme in some way modify a variable declaration? eg. Does
    * it mark a variable as mutable?
    */
-  bool isVariableModifier() { return this->checkFlag(LEXEMEFLAG_VARIABLE_MODIFIER); };
+  bool isVariableModifier() const;
 
   /**
    * Is this lexeme assignable to a given literal type? This lexeme is a data
@@ -116,9 +121,7 @@ struct LexemeMetadata {
    *
    * TODO: I'm pretty sure this and related code in lexemes.cpp can be removed
    */
-  bool isAssignableToLiteralType(LexemeType literalType) {
-    return this->literalType.has_value() && this->literalType.value() == literalType;
-  }
+  bool isAssignableToLiteralType(LexemeType literalType) const;
 
   /**
    * Is this lexeme assignable to a given data type? i.e. This lexeme is a
@@ -126,44 +129,10 @@ struct LexemeMetadata {
    *
    * eg. Bool literal is assignable to bool
    */
-  bool isAssignableToDataType(LexemeType dataType) {
-    return this->dataTypes.find(dataType) != this->dataTypes.end();
-  }
-
-  LexemeMetadata(std::string displayName, tl::optional<std::regex> pattern = tl::nullopt,
-                 tl::optional<std::string> codeRepresentation = tl::nullopt,
-                 int flags = LEXEMEFLAG_NONE, tl::optional<LexemeType> literalType = tl::nullopt,
-                 std::set<LexemeType> dataTypes = {})
-    : displayName(displayName), pattern(pattern), codeRepresentation(codeRepresentation),
-      flags(flags), literalType(literalType), dataTypes(dataTypes) {
-    if (this->isReservedKeyword() && !pattern.has_value()) {
-      /*
-       * NB: This check is required for the safety of lexemes.cpp when building
-       * the set of reserved keywords.
-       *
-       * This warning has been left in lexemes.cpp - if changing, cleanup there
-       * too!
-       */
-      // TODO: Proper error
-      throw std::runtime_error("Reserved keyword with no matching pattern. No sensible way to "
-                               "handle. Please define a code representation for this type.");
-    }
-
-    if (this->isDataType() && !literalType.has_value()) {
-      // TODO: Proper error
-      throw std::runtime_error("Attempting to define a data type with no corresponding literal "
-                               "value type. Please provide a corresponding literal type.");
-    }
-
-    if (this->isLiteral() && dataTypes.size() == 0) {
-      // TODO: Proper error
-      throw std::runtime_error("Attempting to define a literal type with no corresponding data "
-                               "value types. Please provide at least one corresponding data type.");
-    }
-  }
+  bool isAssignableToDataType(LexemeType dataType) const;
 
 private:
-  bool checkFlag(int flag) { return (this->flags & flag) == flag; }
+  bool checkFlag(int flag) const;
 };
 
 #endif

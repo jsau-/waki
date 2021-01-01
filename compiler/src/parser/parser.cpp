@@ -56,11 +56,11 @@ Token Parser::advance() {
   return this->previousToken();
 }
 
-bool Parser::hasPreviousToken() { return this->index > this->tokens.size() && !this->isAtEnd(); }
+bool Parser::hasPreviousToken() const { return this->index > this->tokens.size() && !this->isAtEnd(); }
 
-bool Parser::hasNextToken() { return this->tokens.size() > 0 && this->index < this->tokens.size(); }
+bool Parser::hasNextToken() const { return this->tokens.size() > 0 && this->index < this->tokens.size(); }
 
-Token Parser::assertCurrentTokenType(LexemeType type) {
+Token Parser::assertCurrentTokenType(LexemeType type) const {
   if (!this->checkCurrentTokenType(type)) {
     throw ParserError(this->currentToken(), {type});
   }
@@ -68,7 +68,7 @@ Token Parser::assertCurrentTokenType(LexemeType type) {
   return this->currentToken();
 }
 
-Token Parser::assertCurrentTokenType(std::set<LexemeType> types) {
+Token Parser::assertCurrentTokenType(std::set<LexemeType> types) const {
   if (!this->checkCurrentTokenType(types)) {
     throw ParserError(this->currentToken(), types);
   }
@@ -86,14 +86,14 @@ Token Parser::assertCurrentTokenTypeAndAdvance(std::set<LexemeType> types) {
   return this->advance();
 }
 
-bool Parser::checkCurrentTokenType(LexemeType type) { return this->currentToken().type == type; }
+bool Parser::checkCurrentTokenType(LexemeType type) const { return this->currentToken().type == type; }
 
-bool Parser::checkCurrentTokenType(std::set<LexemeType> types) {
+bool Parser::checkCurrentTokenType(std::set<LexemeType> types) const {
   return std::find(std::begin(types), std::end(types), this->currentToken().type) !=
          std::end(types);
 }
 
-bool Parser::checkNextTokenType(LexemeType type) {
+bool Parser::checkNextTokenType(LexemeType type) const {
   if (!this->hasNextToken()) {
     return false;
   }
@@ -101,7 +101,7 @@ bool Parser::checkNextTokenType(LexemeType type) {
   return this->nextToken().type == type;
 }
 
-bool Parser::checkNextTokenType(std::set<LexemeType> types) {
+bool Parser::checkNextTokenType(std::set<LexemeType> types) const {
   if (!this->hasNextToken()) {
     return false;
   }
@@ -109,11 +109,11 @@ bool Parser::checkNextTokenType(std::set<LexemeType> types) {
   return std::find(std::begin(types), std::end(types), this->nextToken().type) != std::end(types);
 }
 
-Token Parser::previousToken() { return this->tokens[this->index - 1]; }
+Token Parser::previousToken() const { return this->tokens[this->index - 1]; }
 
-Token Parser::currentToken() { return this->tokens[this->index]; }
+Token Parser::currentToken() const { return this->tokens[this->index]; }
 
-Token Parser::nextToken() { return this->tokens[this->index + 1]; }
+Token Parser::nextToken() const { return this->tokens[this->index + 1]; }
 
 std::shared_ptr<Expression> Parser::parseExpression() {
   return this->parseCompoundAssignmentExpression();
@@ -433,4 +433,4 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
     expression, isMutable, isNullable);
 }
 
-bool Parser::isAtEnd() { return this->index >= this->tokens.size(); }
+bool Parser::isAtEnd() const { return this->index >= this->tokens.size(); }

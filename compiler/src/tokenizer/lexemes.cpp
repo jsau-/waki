@@ -276,12 +276,16 @@ Lexemes::Lexemes() {
   }
 }
 
-std::map<LexemeType, LexemeMetadata> Lexemes::getMetadata() { return this->metadata; }
-std::set<LexemeType> Lexemes::getSignificantToTokenize() { return this->significantToTokenize; }
-std::set<LexemeType> Lexemes::getDataTypes() { return this->dataTypes; }
-std::set<LexemeType> Lexemes::getBinaryOperators() { return this->binaryOperators; }
-std::set<LexemeType> Lexemes::getLiterals() { return this->literals; }
-std::set<LexemeType> Lexemes::getUnaryOperators() { return this->unaryOperators; }
-std::set<LexemeType> Lexemes::getAssignmentOperators() { return this->assignmentOperators; }
-std::set<LexemeType> Lexemes::getVariableModifiers() { return this->variableModifiers; }
-std::map<LexemeType, std::regex> Lexemes::getReservedKeywords() { return this->reservedKeywords; }
+std::map<LexemeType, LexemeMetadata> Lexemes::getMetadata() const { return this->metadata; }
+std::set<LexemeType> Lexemes::getSignificantToTokenize() const {
+  return this->significantToTokenize;
+}
+std::set<LexemeType> Lexemes::getDataTypes() const { return this->dataTypes; }
+std::set<LexemeType> Lexemes::getBinaryOperators() const { return this->binaryOperators; }
+std::set<LexemeType> Lexemes::getLiterals() const { return this->literals; }
+std::set<LexemeType> Lexemes::getUnaryOperators() const { return this->unaryOperators; }
+std::set<LexemeType> Lexemes::getAssignmentOperators() const { return this->assignmentOperators; }
+std::set<LexemeType> Lexemes::getVariableModifiers() const { return this->variableModifiers; }
+std::map<LexemeType, std::regex> Lexemes::getReservedKeywords() const {
+  return this->reservedKeywords;
+}

@@ -8,8 +8,8 @@ struct AstNode {
   virtual ~AstNode(){};
   virtual void acceptAstVisitor(AstVisitor& visitor) = 0;
 
-  uint64_t getLine() { return this->line; }
-  uint64_t getColumn() { return this->column; }
+  uint64_t getLine() const { return this->line; }
+  uint64_t getColumn() const { return this->column; }
 
 protected:
   /*
