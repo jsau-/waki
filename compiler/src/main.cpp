@@ -66,13 +66,18 @@ myOtherBinaryOp = (((true) && false)) || false;
   std::cout << std::endl << "Emitted source:" << std::endl;
   std::cout << "---------------------------" << std::endl;
 
-  std::cout << wakiEmitter.source() << std::endl << std::endl;
+  std::cout << wakiEmitter.source() << std::endl ;
 
   auto builtinModules = BuiltinModules();
 
+  std::cout << std::endl << "Builtin modules:" << std::endl;
+  std::cout << "---------------------------" << std::endl;
   for (const auto& builtinFunction : builtinModules.getFunctions()) {
-    std::cout << "Has builtin function" << builtinFunction->getName() << std::endl;
+    std::cout << "Has builtin function " << builtinFunction->getName() << std::endl;
   }
+
+  std::cout << std::endl<< "Typechecker:" << std::endl;
+  std::cout << "---------------------------" << std::endl;
 
   auto typechecker = Typechecker(ast);
 
