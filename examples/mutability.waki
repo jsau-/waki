@@ -1,13 +1,9 @@
-/*
- * Because the mutable keyword wasn't used in the declaration, this value cannot
- * be modified
- */
+// Because the mutable keyword wasn't used in the declaration, this value cannot
+// be modified
 immutableInt = 10;
 immutableInt = 20; // Should fail to compile
 
-/*
- * Declaring a variable with the mutable keyword allows you to modify its value
- * after an initial declaration
- */
+// Declaring a variable with the mutable keyword allows you to modify its value
+// after an initial declaration
 mutable mutableInt = 10;
 mutableInt = 20;

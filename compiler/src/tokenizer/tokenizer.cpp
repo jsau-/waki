@@ -8,8 +8,8 @@
 
 Tokenizer::Tokenizer(std::string sourceText) {
   this->sourceText = sourceText;
-  this->line = 0;
-  this->column = 0;
+  this->line = 1;
+  this->column = 1;
 }
 
 std::vector<Token> Tokenizer::tokenize() {
@@ -98,7 +98,7 @@ void Tokenizer::eatChars(uint64_t charsToEat) {
   for (uint64_t i = 0; i < charsToEat; i++) {
     if (this->sourceText[i] == '\n') {
       this->line++;
-      this->column = 0;
+      this->column = 1;
     } else {
       this->column++;
     }

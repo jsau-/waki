@@ -23,6 +23,9 @@ struct Tokenizer {
    * The current line we've reached while tokenizing. Allows us to instantiate
    * individual token structs with values describing _where_ they happened in
    * the program s.t. our errors are more programmer-friendly.
+   *
+   * Note that to be more user-friendly these are 1-indexed, rather than
+   * 0-indexed (most editors present the first line of a file as line 1, not 0!)
    */
   uint64_t line;
 
@@ -30,6 +33,10 @@ struct Tokenizer {
    * The current column we've reached while tokenizing. Allows us to instantiate
    * individual token structs with values describing _where_ they happened in
    * the program s.t. our errors are more programmer-friendly.
+   *
+   * Note that to be more user-friendly these are 1-indexed, rather than
+   * 0-indexed (most editors present the first column of a file as column 1, not
+   * 0!)
    */
   uint64_t column;
 
