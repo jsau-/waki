@@ -12,20 +12,15 @@ struct IdentifierAlreadyDefinedError : public TypecheckerError {
     : TypecheckerError(identifier, line, column),
       lineOriginallyDeclaredAt(lineOriginallyDeclaredAt),
       columnOriginallyDeclaredAt(columnOriginallyDeclaredAt) {
-    this->errorMsg = std::string("Identifier '") + this->identifier +
-                     std::string("' declared at line ") + std::to_string(this->line) +
-                     std::string(", column ") + std::to_string(this->column) +
-                     std::string(" has already been declared on line ") +
-                     std::to_string(this->lineOriginallyDeclaredAt) + std::string(", column ") +
-                     std::to_string(this->columnOriginallyDeclaredAt)
-                     + std::string(".");
+    this->error = std::string("Identifier '") + this->identifier +
+                  std::string("' declared at line ") + std::to_string(this->line) +
+                  std::string(", column ") + std::to_string(this->column) +
+                  std::string(" has already been declared on line ") +
+                  std::to_string(this->lineOriginallyDeclaredAt) + std::string(", column ") +
+                  std::to_string(this->columnOriginallyDeclaredAt) + std::string(".");
   }
 
-  const char *what() const throw() { return this->errorMsg.c_str(); }
-
 private:
-  std::string errorMsg;
-
   // The line the identifier was originally declared at
   uint64_t lineOriginallyDeclaredAt;
 

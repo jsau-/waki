@@ -11,6 +11,8 @@
 int main() {
   auto input = R""""(
 mutable bool iLiteral = false;
+bool iLiteral = 20;
+mutable bool iLiteral = 52; mutable bool iLiteral = false;
 
 iLiteral = null;
 // Brapadoo! ;;;;;;;;;;;;;;;;;;;
@@ -20,7 +22,7 @@ bLiteral = true;
 
 dLiteral *= -10.0d;
 
-string stringystroo = 'Wow. This is a string!';
+string stringystroo = null;
 
 // myBinaryOp = 10 + 20;
 
@@ -73,7 +75,7 @@ myOtherBinaryOp = (((true) && false)) || false;
 
   for (const auto &typeError : typeErrors) {
     std::cout << "Line: " << typeError->getLine() << ", column: " << typeError->getColumn() << "; "
-              << typeError->what() << std::endl;
+              << typeError->getError() << std::endl;
   }
 
   return 0;

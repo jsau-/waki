@@ -16,33 +16,33 @@ struct IdentifierTable {
   IdentifierTable();
 
   // Define a found identifier in the AST
-  Identifier defineIdentifier(std::string identifierName, LexemeType lexemeType, bool isMutable, bool isNullable, uint64_t lineDeclared, uint64_t columnDeclared);
+  Identifier defineIdentifier(std::string identifierName, LexemeType lexemeType, bool isMutable, bool isNullable, uint64_t line, uint64_t column);
 
   // Gets the datastructure representing an identifier for a given name.
-  Identifier getIdentifierForName(std::string identifierName);
+  Identifier getIdentifierForName(std::string identifierName, uint64_t line, uint64_t column);
 
   // Gets the type of an identifier
-  LexemeType getIdentifierType(std::string identifierName);
+  LexemeType getIdentifierType(std::string identifierName, uint64_t line, uint64_t column);
 
   // Gets if an identifier with a given name is actually defined
   bool isIdentifierDefined(std::string identifierName);
 
   // Is the identifier of a known type? Used to determine if we should
   // over-write based on
-  bool isIdentifierOfKnownType(std::string identifierName);
+  bool isIdentifierOfKnownType(std::string identifierName, uint64_t line, uint64_t column);
 
   // Is the identifier mutable?
-  bool isIdentifierMutable(std::string identifierName);
+  bool isIdentifierMutable(std::string identifierName, uint64_t line, uint64_t column);
 
   // Is the identifier nullable?
-  bool isIdentifierNullable(std::string identifierName);
+  bool isIdentifierNullable(std::string identifierName, uint64_t line, uint64_t column);
 
   // Set the type of an identifier
-  void setIdentifierType(std::string identifierName, LexemeType type);
+  void setIdentifierType(std::string identifierName, LexemeType type, uint64_t line, uint64_t column);
 
 private:
-  void assertIdentifierDefined(std::string identifierName);
-  void assertIdentifierUndefined(std::string IdentifierName);
+  void assertIdentifierDefined(std::string identifierName, uint64_t line, uint64_t column);
+  void assertIdentifierUndefined(std::string IdentifierName, uint64_t line, uint64_t column);
 
   std::map<std::string, Identifier> identifiers;
 };

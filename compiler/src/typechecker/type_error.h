@@ -15,18 +15,14 @@ struct TypeError : public TypecheckerError {
     auto metadataForExpected = lexemeMetadata.at(expectedType);
     auto metadataForReceived = lexemeMetadata.at(receivedType);
 
-    this->errorMsg = std::string("Received unexpected type on line ") + std::to_string(this->line) +
+    this->error = std::string("Received unexpected type on line ") + std::to_string(this->line) +
                      std::string(", column ") + std::to_string(this->column) +
                      std::string(". Expected ") + metadataForExpected.displayName +
                      std::string(" but received ") + metadataForReceived.displayName +
                      std::string(".");
   }
 
-  const char *what() const throw() { return this->errorMsg.c_str(); }
-
 private:
-  std::string errorMsg;
-
   LexemeType expectedType;
   LexemeType receivedType;
 };

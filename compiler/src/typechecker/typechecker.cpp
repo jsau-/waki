@@ -57,7 +57,12 @@ void Typechecker::visitFloatLiteralExpression(FloatLiteralExpression &) {
 }
 
 void Typechecker::visitIdentifierExpression(IdentifierExpression &node) {
-  this->latestVisitedType = this->identifierTable.getIdentifierType(node.identifier);
+  try {
+    this->latestVisitedType =
+      this->identifierTable.getIdentifierType(node.identifier, node.getLine(), node.getColumn());
+  } catch (const TypecheckerError &typecheckerError) {
+    this->errors.push_back(std::make_shared<TypecheckerError>(typecheckerError));
+  }
 }
 
 void Typechecker::visitNullLiteralExpression() {
@@ -79,92 +84,100 @@ void Typechecker::visitBlockStatement(BlockStatement &node) {
 }
 
 void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &node) {
-  auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+  try {
+    auto lexemeMetadata = Lexemes::getInstance().getMetadata();
 
-  auto hasIdentifierBeenDefined = this->identifierTable.isIdentifierDefined(node.identifier);
-
-  /*
-   * The lexeme is explicitly marked as a declaration, or it's the first time
-   * we've encountered it (and hence we'll treat it as a declaration)
-   */
-  if (node.isDeclaration() || !hasIdentifierBeenDefined) {
-    auto identifier =
-      this->identifierTable.defineIdentifier(node.identifier, node.dataType, node.isMutable,
-                                             node.isNullable, node.getLine(), node.getColumn());
+    auto hasIdentifierBeenDefined = this->identifierTable.isIdentifierDefined(node.identifier);
 
     /*
-     * As part of a variable declaration, if no type were provided, eg. code
-     * `foo = 10;` we need to infer it from
+     * The lexeme is explicitly marked as a declaration, or it's the first time
+     * we've encountered it (and hence we'll treat it as a declaration)
      */
-    node.expression->acceptAstVisitor(*this);
-    auto expressionType = this->latestVisitedType;
-    auto lexemeMetadataForExpressionType = lexemeMetadata.at(expressionType);
+    if (node.isDeclaration() || !hasIdentifierBeenDefined) {
+      auto identifier =
+        this->identifierTable.defineIdentifier(node.identifier, node.dataType, node.isMutable,
+                                               node.isNullable, node.getLine(), node.getColumn());
 
-    /*
-     * If no explicit type were set on the identifier, we can safely just assign
-     * it the corresponding literal type for the result of the RHS expression
-     */
-    if (!this->identifierTable.isIdentifierOfKnownType(identifier.name)) {
-      if (lexemeMetadataForExpressionType.dataTypes.size() > 1) {
-        this->errors.push_back(std::make_shared<UninferrableTypeError>(
-          identifier.name, node.getLine(), node.getColumn(), expressionType));
-      }
-
-      // TODO: Logic duplicated below
-      auto inferredIdentifierType = *lexemeMetadataForExpressionType.dataTypes.begin();
-
-      auto areNullChecksViolated =
-        LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
-
-      if (areNullChecksViolated) {
-        this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
-                                                           inferredIdentifierType, expressionType));
-      }
-
-      this->identifierTable.setIdentifierType(identifier.name, inferredIdentifierType);
       /*
-       * If an explicit type _were_ set on the identifier, we need to assert that
-       * the RHS expression is assignable to its type.
+       * As part of a variable declaration, if no type were provided, eg. code
+       * `foo = 10;` we need to infer it from
+       */
+      node.expression->acceptAstVisitor(*this);
+      auto expressionType = this->latestVisitedType;
+      auto lexemeMetadataForExpressionType = lexemeMetadata.at(expressionType);
+
+      /*
+       * If no explicit type were set on the identifier, we can safely just assign
+       * it the corresponding literal type for the result of the RHS expression
+       */
+      if (!this->identifierTable.isIdentifierOfKnownType(identifier.name, node.getLine(),
+                                                         node.getColumn())) {
+        if (lexemeMetadataForExpressionType.dataTypes.size() > 1) {
+          this->errors.push_back(std::make_shared<UninferrableTypeError>(
+            identifier.name, node.getLine(), node.getColumn(), expressionType));
+        }
+
+        // TODO: Logic duplicated below
+        auto inferredIdentifierType = *lexemeMetadataForExpressionType.dataTypes.begin();
+
+        auto areNullChecksViolated =
+          LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
+
+        if (areNullChecksViolated) {
+          this->errors.push_back(std::make_shared<TypeError>(
+            node.getLine(), node.getColumn(), inferredIdentifierType, expressionType));
+        }
+
+        this->identifierTable.setIdentifierType(identifier.name, inferredIdentifierType,
+                                                node.getLine(), node.getColumn());
+        /*
+         * If an explicit type _were_ set on the identifier, we need to assert that
+         * the RHS expression is assignable to its type.
+         */
+      } else {
+        // TODO: Logic duplicated below
+        auto isExpressionUnassignable =
+          !lexemeMetadataForExpressionType.isAssignableToDataType(identifier.type);
+        auto areNullChecksViolated =
+          LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
+
+        if (isExpressionUnassignable || areNullChecksViolated) {
+          this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
+                                                             identifier.type, expressionType));
+        }
+      }
+      /*
+       * The variable is both not marked as a declaration, and we've got a record
+       * of it existing in our identifier table. We need to evaluate the type of
+       * its RHS expression and assert that it matches our stored type.
        */
     } else {
-      // TODO: Logic duplicated below
+      auto existingIdentifier = this->identifierTable.getIdentifierForName(
+        node.identifier, node.getLine(), node.getColumn());
+
+      if (!this->identifierTable.isIdentifierMutable(existingIdentifier.name, node.getLine(),
+                                                     node.getColumn())) {
+        this->errors.push_back(std::make_shared<MutabilityViolationError>(
+          existingIdentifier.name, node.getLine(), node.getColumn()));
+      }
+
+      auto lexemeMetadataForIdentifier = lexemeMetadata.at(existingIdentifier.type);
+
+      node.expression->acceptAstVisitor(*this);
+      auto expressionType = this->latestVisitedType;
+      auto lexemeMetadataForExpression = lexemeMetadata.at(expressionType);
+
       auto isExpressionUnassignable =
-        !lexemeMetadataForExpressionType.isAssignableToDataType(identifier.type);
+        !lexemeMetadataForExpression.isAssignableToDataType(existingIdentifier.type);
       auto areNullChecksViolated =
-        LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
+        LexemeType::NULL_LITERAL == expressionType && !existingIdentifier.isNullable;
 
       if (isExpressionUnassignable || areNullChecksViolated) {
-        this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
-                                                           identifier.type, expressionType));
+        this->errors.push_back(std::make_shared<TypeError>(
+          node.getLine(), node.getColumn(), existingIdentifier.type, expressionType));
       }
     }
-    /*
-     * The variable is both not marked as a declaration, and we've got a record
-     * of it existing in our identifier table. We need to evaluate the type of
-     * its RHS expression and assert that it matches our stored type.
-     */
-  } else {
-    auto existingIdentifier = this->identifierTable.getIdentifierForName(node.identifier);
-
-    if (!this->identifierTable.isIdentifierMutable(existingIdentifier.name)) {
-      this->errors.push_back(std::make_shared<MutabilityViolationError>(
-        existingIdentifier.name, node.getLine(), node.getColumn()));
-    }
-
-    auto lexemeMetadataForIdentifier = lexemeMetadata.at(existingIdentifier.type);
-
-    node.expression->acceptAstVisitor(*this);
-    auto expressionType = this->latestVisitedType;
-    auto lexemeMetadataForExpression = lexemeMetadata.at(expressionType);
-
-    auto isExpressionUnassignable =
-      !lexemeMetadataForExpression.isAssignableToDataType(existingIdentifier.type);
-    auto areNullChecksViolated =
-      LexemeType::NULL_LITERAL == expressionType && !existingIdentifier.isNullable;
-
-    if (isExpressionUnassignable || areNullChecksViolated) {
-      this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
-                                                         existingIdentifier.type, expressionType));
-    }
+  } catch (const TypecheckerError &typecheckerError) {
+    this->errors.push_back(std::make_shared<TypecheckerError>(typecheckerError));
   }
 }
