@@ -83,6 +83,7 @@ void Typechecker::visitBlockStatement(BlockStatement &node) {
   }
 }
 
+// TODO: Also check nullability of RHS - can't assign nullable int to int
 void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &node) {
   try {
     auto lexemeMetadata = Lexemes::getInstance().getMetadata();

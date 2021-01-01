@@ -2,6 +2,7 @@
 #include <string>
 
 #include "emitter/waki_emitter.h"
+#include "modules/builtin_modules.h"
 #include "parser/parser.h"
 #include "tokenizer/lexemes.h"
 #include "tokenizer/token.h"
@@ -66,6 +67,12 @@ myOtherBinaryOp = (((true) && false)) || false;
   std::cout << "---------------------------" << std::endl;
 
   std::cout << wakiEmitter.source() << std::endl << std::endl;
+
+  auto builtinModules = BuiltinModules();
+
+  for (const auto& builtinFunction : builtinModules.getFunctions()) {
+    std::cout << "Has builtin function" << builtinFunction->getName() << std::endl;
+  }
 
   auto typechecker = Typechecker(ast);
 

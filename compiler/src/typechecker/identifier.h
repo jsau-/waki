@@ -30,8 +30,12 @@ struct Identifier {
   // The column the identifier was declared at
   uint64_t columnDeclared;
 
-  Identifier(std::string name = "", LexemeType type = LexemeType::UNKNOWN, bool isMutable = false, bool isNullable = false, uint64_t lineDeclared = 0, uint64_t columnDeclared = 0)
-    : name(name), type(type), isMutable(isMutable), isNullable(isNullable), lineDeclared(lineDeclared), columnDeclared(columnDeclared) {}
+  Identifier(std::string name = "", LexemeType type = LexemeType::UNKNOWN, bool isMutable = false,
+             bool isNullable = false, uint64_t lineDeclared = 0, uint64_t columnDeclared = 0)
+    : name(name), type(type), isMutable(isMutable), isNullable(isNullable),
+      lineDeclared(lineDeclared), columnDeclared(columnDeclared) {}
+
+  bool operator==(const Identifier &rhs) const;
 };
 
 #endif
