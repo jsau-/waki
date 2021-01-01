@@ -1,10 +1,13 @@
 #include <algorithm>
+#include <sstream>
 
+#include "../tokenizer/lexemes.h"
 #include "builtin_modules.h"
 #include "epoch.h"
 #include "module_error.h"
 
 BuiltinModules::BuiltinModules() {
+  this->registerFunction(std::make_shared<Epoch>());
   this->registerFunction(std::make_shared<Epoch>());
 }
 
@@ -14,8 +17,24 @@ void BuiltinModules::registerFunction(const std::shared_ptr<Function> function) 
                    [&function](const std::shared_ptr<Function> existingFunction) {
                      return *function == *existingFunction;
                    }) != this->functions.end()) {
-    // TODO: More detailed error msg
-    throw ModuleError("Attempting to redefine function.");
+    auto sstream = std::stringstream();
+
+    auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+
+    sstream << "Attempting to redefine function '" << function->getName() << "' with return type "
+            << lexemeMetadata.at(function->getReturnType()).displayName;
+
+    if (function->getArguments().size()) {
+      sstream << " and arguments";
+
+      for (const auto &identifier : function->getArguments()) {
+        sstream << " (" << lexemeMetadata.at(identifier.type).displayName << ")";
+      }
+    }
+
+    sstream << ".";
+
+    throw ModuleError(sstream.str());
   }
 
   this->functions.push_back(function);
