@@ -1,6 +1,6 @@
 #include <CLI11.h>
 #include <fstream>
-#include <iostream>
+#include <spdlog/spdlog.h>
 #include <string>
 
 #include "emitter/waki_emitter.h"
@@ -17,79 +17,83 @@ int main(int argc, char **argv) {
   std::string inFilePath;
   app.add_option("-i,--in-file", inFilePath, "Path to input file to compile.")->required();
 
+  bool verbose;
+  app.add_flag("-v,--verbose", verbose, "Include verbose output from compiler modules for better debugging.");
+
   CLI11_PARSE(app, argc, argv);
+
+  if (verbose) {
+    spdlog::set_level(spdlog::level::trace);
+  } else {
+    spdlog::set_level(spdlog::level::warn);
+  }
 
   std::ifstream inFileStream(inFilePath);
 
+
   if (!inFileStream) {
-    std::cerr << "Error reading file '" << inFilePath << "'. " << strerror(errno) << std::endl;
+    spdlog::critical("Error reading input file '{}'. {}.", inFilePath, strerror(errno));
     return -1;
   }
 
   std::string inFile((std::istreambuf_iterator<char>(inFileStream)),
                      (std::istreambuf_iterator<char>()));
 
-    std::cout << "Instantiating tokenizer" << std::endl;
+  spdlog::trace("Instantiating tokenizer.");
 
-    auto tokenizer = Tokenizer(inFile);
+  auto tokenizer = Tokenizer(inFile);
 
-    std::cout << "Tokenizing input" << std::endl;
+  spdlog::trace("Tokenizing input.");
 
-    const auto tokens = tokenizer.tokenize();
+  const auto tokens = tokenizer.tokenize();
 
-    std::cout << "Tokens:" << std::endl;
-    std::cout << "---------------------------" << std::endl;
+  spdlog::trace("Received tokens:");
 
-    auto lexemeMetadata = Lexemes::getInstance().getMetadata();
+  auto lexemeMetadata = Lexemes::getInstance().getMetadata();
 
-    for (auto const &token : tokens) {
-      std::cout << "Token: " << lexemeMetadata.at(token.type).displayName << " (" <<
-      (int)token.type
-                << ")"
-                << " | value '" << token.value << "' | line number " << token.lineNumber
-                << " | column number " << token.columnNumber << std::endl;
-    }
-    std::cout << "---------------------------" << std::endl << std::endl;
+  for (auto const &token : tokens) {
+    spdlog::trace("Token: {} ({}) | value '{}' | line number {} | column number ",
+                  lexemeMetadata.at(token.type).displayName, token.type, token.value,
+                  token.lineNumber, token.columnNumber);
+  }
 
-    std::cout << "Instantiating parser" << std::endl;
+  spdlog::trace("Instantiating parser.");
 
-    auto parser = Parser(inFile, tokens);
+  auto parser = Parser(inFile, tokens);
 
-    std::cout << "Parsing tokens" << std::endl;
+  spdlog::trace("Parsing tokens.");
 
-    auto ast = parser.parse();
+  auto ast = parser.parse();
 
-    std::cout << "Instantiating emitter" << std::endl;
+  spdlog::trace("Instantiating Waki emitter.");
 
-    auto wakiEmitter = WakiEmitter(ast);
+  auto wakiEmitter = WakiEmitter(ast);
 
-    std::cout << std::endl << "Emitted source:" << std::endl;
-    std::cout << "---------------------------" << std::endl;
+  spdlog::trace("Emitted Waki source code: \n{}", wakiEmitter.source());
 
-    std::cout << wakiEmitter.source() << std::endl ;
+  auto builtinModules = BuiltinModules();
 
-    auto builtinModules = BuiltinModules();
+  spdlog::trace("Found built-in modules:");
 
-    std::cout << std::endl << "Builtin modules:" << std::endl;
-    std::cout << "---------------------------" << std::endl;
-    for (const auto& builtinFunction : builtinModules.getFunctions()) {
-      std::cout << "Has builtin function " << builtinFunction->getName() << std::endl;
-    }
+  for (const auto &builtinFunction : builtinModules.getFunctions()) {
+    spdlog::trace("Has builtin function {}", builtinFunction->getName());
+  }
 
-    std::cout << std::endl<< "Typechecker:" << std::endl;
-    std::cout << "---------------------------" << std::endl;
+  spdlog::trace("Instantiating typechecker:");
 
-    auto typechecker = Typechecker(ast);
+  auto typechecker = Typechecker(ast);
 
-    auto typeErrors = typechecker.check();
+  auto typeErrors = typechecker.check();
 
-    std::cout << "Received " << typeErrors.size() << " type error(s)" << std::endl;
-
+  if (typeErrors.size() == 0) {
+    spdlog::debug("No type errors.");
+  } else {
+    spdlog::error("Received {} type error(s)", typeErrors.size());
     for (const auto &typeError : typeErrors) {
-      std::cout << "Line: " << typeError->getLine() << ", column: " << typeError->getColumn() <<
-      "; "
-                << typeError->getError() << std::endl;
+      spdlog::error("Line: {}, column {}; {}", typeError->getLine(), typeError->getColumn(),
+                    typeError->getError());
     }
+  }
 
   return 0;
 }
