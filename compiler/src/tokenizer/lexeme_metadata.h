@@ -16,7 +16,7 @@
 struct LexemeMetadata {
   LexemeMetadata(std::string displayName, tl::optional<std::regex> pattern = tl::nullopt,
                  tl::optional<std::string> codeRepresentation = tl::nullopt,
-                 int flags = LEXEMEFLAG_NONE, tl::optional<LexemeType> literalType = tl::nullopt,
+                 int flags = LEXEMEFLAG_NONE,
                  std::set<LexemeType> dataTypes = {});
 
   /**
@@ -45,11 +45,6 @@ struct LexemeMetadata {
    * express multiple properties without requiring tens of parameters
    */
   int flags;
-
-  /**
-   * If this lexeme is a data type, the literal type it corresponds to.
-   */
-  tl::optional<LexemeType> literalType;
 
   /**
    * If this lexeme is a literal type, the set of data types it can be
@@ -112,16 +107,6 @@ struct LexemeMetadata {
    * it mark a variable as mutable?
    */
   bool isVariableModifier() const;
-
-  /**
-   * Is this lexeme assignable to a given literal type? This lexeme is a data
-   * type, and that data type can hold a literal value of the provided type.
-   *
-   * eg. Bool variable can hold a bool literal.
-   *
-   * TODO: I'm pretty sure this and related code in lexemes.cpp can be removed
-   */
-  bool isAssignableToLiteralType(LexemeType literalType) const;
 
   /**
    * Is this lexeme assignable to a given data type? i.e. This lexeme is a

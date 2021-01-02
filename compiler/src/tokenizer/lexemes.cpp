@@ -25,24 +25,19 @@ Lexemes::Lexemes() {
     {LexemeType::SIGNED_INTEGER_32,
      LexemeMetadata("signed 32-bit integer variable", std::regex("int"), "int",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                      LEXEMEFLAG_RESERVED_KEYWORD,
-                    LexemeType::SIGNED_INTEGER_32_LITERAL)},
+                      LEXEMEFLAG_RESERVED_KEYWORD)},
     {LexemeType::FLOAT, LexemeMetadata("floating point variable", std::regex("float"), "float",
                                        LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                                         LEXEMEFLAG_RESERVED_KEYWORD,
-                                       LexemeType::FLOAT_LITERAL)},
+                                         LEXEMEFLAG_RESERVED_KEYWORD)},
     {LexemeType::DOUBLE, LexemeMetadata("double-precision variable", std::regex("double"), "double",
                                         LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                                          LEXEMEFLAG_RESERVED_KEYWORD,
-                                        LexemeType::DOUBLE_LITERAL)},
+                                          LEXEMEFLAG_RESERVED_KEYWORD)},
     {LexemeType::BOOLEAN, LexemeMetadata("boolean variable", std::regex("bool"), "bool",
                                          LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                                           LEXEMEFLAG_RESERVED_KEYWORD,
-                                         LexemeType::BOOLEAN_LITERAL)},
+                                           LEXEMEFLAG_RESERVED_KEYWORD)},
     {LexemeType::STRING, LexemeMetadata("string variable", std::regex("string"), "string",
                                         LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_DATA_TYPE |
-                                          LEXEMEFLAG_RESERVED_KEYWORD,
-                                        LexemeType::STRING_LITERAL)},
+                                          LEXEMEFLAG_RESERVED_KEYWORD)},
 
     /*
      * Data type modifiers
@@ -59,25 +54,21 @@ Lexemes::Lexemes() {
 
     {LexemeType::FLOAT_LITERAL,
      LexemeMetadata("floating point literal", std::regex("[+-]?([0-9]*[.])?[0-9]+f"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, tl::nullopt,
-                    {LexemeType::FLOAT})},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, {LexemeType::FLOAT})},
     {LexemeType::DOUBLE_LITERAL,
      LexemeMetadata("double-precision literal", std::regex("[+-]?([0-9]*[.])?[0-9]+d"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, tl::nullopt,
-                    {LexemeType::DOUBLE})},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, {LexemeType::DOUBLE})},
     {LexemeType::SIGNED_INTEGER_32_LITERAL,
      LexemeMetadata("signed 32-bit integer literal", std::regex("[+-]?\\d+"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, tl::nullopt,
-                    {LexemeType::SIGNED_INTEGER_32})},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, {LexemeType::SIGNED_INTEGER_32})},
     {LexemeType::BOOLEAN_LITERAL,
      LexemeMetadata("boolean literal", std::regex("true|false"), tl::nullopt,
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL |
                       LEXEMEFLAG_RESERVED_KEYWORD,
-                    tl::nullopt, {LexemeType::BOOLEAN})},
+                    {LexemeType::BOOLEAN})},
     {LexemeType::STRING_LITERAL,
      LexemeMetadata("string literal", std::regex("'([^'\\\\]|\\\\.)*'"), tl::nullopt,
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, tl::nullopt,
-                    {LexemeType::STRING})},
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, {LexemeType::STRING})},
 
     /*
      * Keywords

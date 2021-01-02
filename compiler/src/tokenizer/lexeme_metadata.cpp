@@ -2,9 +2,9 @@
 
 LexemeMetadata::LexemeMetadata(std::string displayName, tl::optional<std::regex> pattern,
                                tl::optional<std::string> codeRepresentation, int flags,
-                               tl::optional<LexemeType> literalType, std::set<LexemeType> dataTypes)
+                               std::set<LexemeType> dataTypes)
   : displayName(displayName), pattern(pattern), codeRepresentation(codeRepresentation),
-    flags(flags), literalType(literalType), dataTypes(dataTypes) {
+    flags(flags), dataTypes(dataTypes) {
   if (this->isReservedKeyword() && !pattern.has_value()) {
     /*
      * NB: This check is required for the safety of lexemes.cpp when building
@@ -16,12 +16,6 @@ LexemeMetadata::LexemeMetadata(std::string displayName, tl::optional<std::regex>
     // TODO: Proper error
     throw std::runtime_error("Reserved keyword with no matching pattern. No sensible way to "
                              "handle. Please define a code representation for this type.");
-  }
-
-  if (this->isDataType() && !literalType.has_value()) {
-    // TODO: Proper error
-    throw std::runtime_error("Attempting to define a data type with no corresponding literal "
-                             "value type. Please provide a corresponding literal type.");
   }
 
   if (this->isLiteral() && dataTypes.size() == 0) {
@@ -59,10 +53,6 @@ bool LexemeMetadata::isAssignmentOperator() const {
 
 bool LexemeMetadata::isVariableModifier() const {
   return this->checkFlag(LEXEMEFLAG_VARIABLE_MODIFIER);
-}
-
-bool LexemeMetadata::isAssignableToLiteralType(LexemeType literalType) const {
-  return this->literalType.has_value() && this->literalType.value() == literalType;
 }
 
 bool LexemeMetadata::isAssignableToDataType(LexemeType dataType) const {
