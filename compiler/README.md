@@ -7,6 +7,10 @@ Compiler for `waki` source code.
 Makefile targets `debug` and `release` build repective versions of the compiler.
 The compiler can be invoked by running `./build/apps/program`.
 
+Makefile target `all` is currently set to create a debug build of the compiler
+in directory `./build`. To run the executable first `make` and then
+`./build/waki`.
+
 ## Phases
 
 The process of compiling `waki` can be reduced to the following chronological
