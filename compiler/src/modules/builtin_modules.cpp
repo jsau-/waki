@@ -6,10 +6,7 @@
 #include "epoch.h"
 #include "module_error.h"
 
-BuiltinModules::BuiltinModules() {
-  this->registerFunction(std::make_shared<Epoch>());
-  this->registerFunction(std::make_shared<Epoch>());
-}
+BuiltinModules::BuiltinModules() { this->registerFunction(std::make_shared<Epoch>()); }
 
 void BuiltinModules::registerFunction(const std::shared_ptr<Function> function) {
   // Has an equivalent function already been defined?

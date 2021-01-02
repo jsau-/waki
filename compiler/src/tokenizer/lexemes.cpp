@@ -109,6 +109,12 @@ Lexemes::Lexemes() {
     {LexemeType::IMPORT,
      LexemeMetadata("import", std::regex("import"), "import",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
+    {LexemeType::IF,
+     LexemeMetadata("if", std::regex("if"), "if",
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
+    {LexemeType::ELSE,
+     LexemeMetadata("else", std::regex("else"), "else",
+                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD)},
 
     /*
      * Operators
@@ -210,11 +216,11 @@ Lexemes::Lexemes() {
     {LexemeType::OPEN_BRACE,
      LexemeMetadata("open brace", std::regex("\\{"), "{", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
     {LexemeType::CLOSE_BRACE,
-     LexemeMetadata("open brace", std::regex("\\}"), "}", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+     LexemeMetadata("close brace", std::regex("\\}"), "}", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
     {LexemeType::OPEN_PARENTHESIS, LexemeMetadata("open parenthesis", std::regex("\\("), "(",
                                                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
-    {LexemeType::CLOSE_PARENTHESIS,
-     LexemeMetadata("close brace", std::regex("\\)"), ")", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
+    {LexemeType::CLOSE_PARENTHESIS, LexemeMetadata("close parenthesis", std::regex("\\)"), ")",
+                                                   LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
     {LexemeType::END_OF_STATEMENT,
      LexemeMetadata("end of statement", std::regex(";"), ";", LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE)},
     {LexemeType::LIST_DELIMITER,

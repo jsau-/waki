@@ -63,6 +63,8 @@ enum class LexemeType {
   RETURN,
   NAMESPACE,
   IMPORT,
+  IF, 
+  ELSE,
 
   /*
    * Operators

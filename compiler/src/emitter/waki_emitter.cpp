@@ -62,6 +62,32 @@ void WakiEmitter::visitBlockStatement(BlockStatement &node) {
   }
 }
 
+void WakiEmitter::visitConditionalStatement(ConditionalStatement &node) {
+  auto lexemesMetadata = Lexemes::getInstance().getMetadata();
+
+  // TODO: I think we should refactor out writing a given LexemeType to a member
+  // func - we repeat this value_or stuff quite a lot and it's kinda
+  // boilerplate-y
+  this->sourceStream
+    << lexemesMetadata.at(LexemeType::IF).codeRepresentation.value_or("") << " "
+    << lexemesMetadata.at(LexemeType::OPEN_PARENTHESIS).codeRepresentation.value_or("");
+
+  // Write if expression
+  std::get<0>(node.ifBlock)->acceptAstVisitor(*this);
+
+  this->sourceStream
+    << lexemesMetadata.at(LexemeType::CLOSE_PARENTHESIS).codeRepresentation.value_or("") << " "
+    << lexemesMetadata.at(LexemeType::OPEN_BRACE).codeRepresentation.value_or("")
+    << std::endl;
+
+  // Write if block
+  std::get<1>(node.ifBlock)->acceptAstVisitor(*this);
+
+  this->sourceStream << lexemesMetadata.at(LexemeType::CLOSE_BRACE).codeRepresentation.value_or("")
+    << lexemesMetadata.at(LexemeType::END_OF_STATEMENT).codeRepresentation.value_or("")
+    << std::endl;
+}
+
 void WakiEmitter::visitVariableAssignmentStatement(VariableAssignmentStatement &node) {
   auto lexemesMetadata = Lexemes::getInstance().getMetadata();
 

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <tuple>
 
 #include "../tokenizer/lexemes.h"
 #include "expressions/binary_operator_expression.h"
@@ -14,6 +15,7 @@
 #include "expressions/signed_int_32_literal_expression.h"
 #include "expressions/string_literal_expression.h"
 #include "parser_error.h"
+#include "statements/conditional_statement.h"
 #include "statements/variable_assignment_statement.h"
 
 Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
@@ -56,9 +58,13 @@ Token Parser::advance() {
   return this->previousToken();
 }
 
-bool Parser::hasPreviousToken() const { return this->index > this->tokens.size() && !this->isAtEnd(); }
+bool Parser::hasPreviousToken() const {
+  return this->index > this->tokens.size() && !this->isAtEnd();
+}
 
-bool Parser::hasNextToken() const { return this->tokens.size() > 0 && this->index < this->tokens.size(); }
+bool Parser::hasNextToken() const {
+  return this->tokens.size() > 0 && this->index < this->tokens.size();
+}
 
 Token Parser::assertCurrentTokenType(LexemeType type) const {
   if (!this->checkCurrentTokenType(type)) {
@@ -86,7 +92,9 @@ Token Parser::assertCurrentTokenTypeAndAdvance(std::set<LexemeType> types) {
   return this->advance();
 }
 
-bool Parser::checkCurrentTokenType(LexemeType type) const { return this->currentToken().type == type; }
+bool Parser::checkCurrentTokenType(LexemeType type) const {
+  return this->currentToken().type == type;
+}
 
 bool Parser::checkCurrentTokenType(std::set<LexemeType> types) const {
   return std::find(std::begin(types), std::end(types), this->currentToken().type) !=
@@ -377,10 +385,17 @@ tl::optional<std::shared_ptr<Statement>> Parser::parseStatement() {
    */
   if (this->checkCurrentTokenType(LexemeType::END_OF_STATEMENT)) {
     this->advance();
-    return this->parseStatement();
+    return tl::nullopt;
   }
 
-  auto statement = tl::optional<std::shared_ptr<Statement>>(this->parseVariableAssignmentStatement());
+  auto statement = tl::optional<std::shared_ptr<Statement>>();
+
+  if (this->currentToken().type == LexemeType::IF) {
+    statement = this->parseConditionalStatement();
+  } else {
+    statement = this->parseVariableAssignmentStatement();
+  }
+
   return statement;
 }
 
@@ -431,6 +446,37 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   return std::make_shared<VariableAssignmentStatement>(
     firstToken.lineNumber, firstToken.columnNumber, dataType, identifier.value, operatorToken.type,
     expression, isMutable, isNullable);
+}
+
+std::shared_ptr<Statement> Parser::parseConditionalStatement() {
+  auto ifToken = this->assertCurrentTokenTypeAndAdvance(LexemeType::IF);
+  this->assertCurrentTokenTypeAndAdvance(LexemeType::OPEN_PARENTHESIS);
+  auto ifExpression = this->parseExpression();
+  this->assertCurrentTokenTypeAndAdvance(LexemeType::CLOSE_PARENTHESIS);
+  this->assertCurrentTokenTypeAndAdvance(LexemeType::OPEN_BRACE);
+
+  auto currentToken = this->currentToken();
+
+  auto ifBlock =
+    std::make_shared<BlockStatement>(currentToken.lineNumber, currentToken.columnNumber);
+
+  while (!this->checkCurrentTokenType(LexemeType::CLOSE_BRACE)) {
+    auto nextStatement = this->parseStatement();
+
+    // TODO: Warning if no value?
+    if (nextStatement.has_value()) {
+      ifBlock->statements.push_back(*nextStatement);
+    }
+  }
+
+  this->assertCurrentTokenTypeAndAdvance(LexemeType::CLOSE_BRACE);
+
+  this->assertCurrentTokenTypeAndAdvance(LexemeType::END_OF_STATEMENT);
+
+  return std::make_shared<ConditionalStatement>(
+    ifToken.lineNumber, ifToken.columnNumber,
+    std::tuple<std::shared_ptr<Expression>, std::shared_ptr<BlockStatement>>(ifExpression,
+                                                                             ifBlock));
 }
 
 bool Parser::isAtEnd() const { return this->index >= this->tokens.size(); }

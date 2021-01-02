@@ -1,0 +1,9 @@
+mutable int foo = 10;
+
+if (true) {
+  foo = 20;
+
+  if (false) {
+    foo = 30;
+  };
+};

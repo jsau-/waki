@@ -83,6 +83,19 @@ void Typechecker::visitBlockStatement(BlockStatement &node) {
   }
 }
 
+void Typechecker::visitConditionalStatement(ConditionalStatement &node) {
+  std::get<0>(node.ifBlock)->acceptAstVisitor(*this);
+
+  // All conditional expressions must evaluate to a boolean literal
+  // TODO: This looks like it should be refactored out to
+  // `this->assertLatestVisitedType()` or similar, would be able to use that
+  // anywhere we're currently pushing an instance of TypeError I'd imagine.
+  if (this->latestVisitedType != LexemeType::BOOLEAN_LITERAL) {
+    this->errors.push_back(std::make_shared<TypeError>(
+      node.getLine(), node.getColumn(), LexemeType::BOOLEAN_LITERAL, this->latestVisitedType));
+  }
+}
+
 // TODO: Also check nullability of RHS - can't assign nullable int to int
 void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &node) {
   try {

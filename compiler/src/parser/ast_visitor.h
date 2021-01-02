@@ -14,6 +14,7 @@ struct NullLiteralExpression;
 struct SignedInt32LiteralExpression;
 struct StringLiteralExpression;
 struct BlockStatement;
+struct ConditionalStatement;
 struct VariableAssignmentStatement;
 
 // TODO: Currently we just treat BlockStatement as our primary node; I think
@@ -23,19 +24,18 @@ struct VariableAssignmentStatement;
 struct AstVisitor {
   virtual ~AstVisitor(){};
 
-  virtual void visitBinaryOperatorExpression(BinaryOperatorExpression& node) = 0;
-  virtual void visitBoolLiteralExpression(BoolLiteralExpression& node) = 0;
-  virtual void visitDoubleLiteralExpression(DoubleLiteralExpression& node) = 0;
-  virtual void visitFloatLiteralExpression(FloatLiteralExpression& node) = 0;
-  virtual void visitIdentifierExpression(IdentifierExpression& node) = 0;
+  virtual void visitBinaryOperatorExpression(BinaryOperatorExpression &node) = 0;
+  virtual void visitBoolLiteralExpression(BoolLiteralExpression &node) = 0;
+  virtual void visitDoubleLiteralExpression(DoubleLiteralExpression &node) = 0;
+  virtual void visitFloatLiteralExpression(FloatLiteralExpression &node) = 0;
+  virtual void visitIdentifierExpression(IdentifierExpression &node) = 0;
   virtual void visitNullLiteralExpression() = 0;
-  virtual void visitSignedInt32LiteralExpression(
-      SignedInt32LiteralExpression& node) = 0;
-  virtual void visitStringLiteralExpression(StringLiteralExpression& node) = 0;
+  virtual void visitSignedInt32LiteralExpression(SignedInt32LiteralExpression &node) = 0;
+  virtual void visitStringLiteralExpression(StringLiteralExpression &node) = 0;
 
-  virtual void visitBlockStatement(BlockStatement& node) = 0;
-  virtual void visitVariableAssignmentStatement(
-      VariableAssignmentStatement& node) = 0;
+  virtual void visitBlockStatement(BlockStatement &node) = 0;
+  virtual void visitConditionalStatement(ConditionalStatement &node) = 0;
+  virtual void visitVariableAssignmentStatement(VariableAssignmentStatement &node) = 0;
 };
 
 #endif

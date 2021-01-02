@@ -33,16 +33,16 @@ struct ParserError : public std::exception {
         if (std::next(iter) != expectedTokenTypes.end()) {
           expectedTokenListStream << std::endl;
         }
-    }
+      }
 
       expectedTokenList = expectedTokenListStream.str();
     }
 
-    this->errorMsg =
-      std::string("Parser error at line ") + std::to_string(token.lineNumber) +
-      std::string(", column ") + std::to_string(token.columnNumber) + std::string("\n\n") +
-      std::string("Expected ") + expectedTokenList + std::string("\n\n") +
-      "Received: " + lexemeMetadata.at(token.type).displayName + " " + token.value + std::string("\n\n");
+    this->errorMsg = std::string("Parser error at line ") + std::to_string(token.lineNumber) +
+                     std::string(", column ") + std::to_string(token.columnNumber) +
+                     std::string("\n\n") + std::string("Expected ") + expectedTokenList +
+                     ", but received " + lexemeMetadata.at(token.type).displayName + " '" +
+                     token.value + "'.";
   };
 
   char const *what() const throw() { return this->errorMsg.c_str(); }

@@ -14,7 +14,7 @@ struct BlockStatement : Statement {
   std::vector<std::shared_ptr<Statement>> statements;
 
   BlockStatement(uint64_t line, uint64_t column,
-                 std::vector<std::shared_ptr<Statement>> statements)
+                 std::vector<std::shared_ptr<Statement>> statements = {})
     : Statement(line, column), statements(statements) {}
 
   virtual void acceptAstVisitor(AstVisitor &visitor) override {

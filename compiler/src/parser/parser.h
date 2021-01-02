@@ -125,6 +125,7 @@ private:
 
   tl::optional<std::shared_ptr<Statement>> parseStatement();
   std::shared_ptr<Statement> parseVariableAssignmentStatement();
+  std::shared_ptr<Statement> parseConditionalStatement();
 
   bool isAtEnd() const;
 };
