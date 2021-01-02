@@ -1,7 +1,12 @@
-* Conditional statements (if/else)
+* Add tests over tokenizer, parser
+* Implement limitations on maximum identifier length
+* Refactor tokenizer, parser to collect and return errors (not throw)
+* Finish conditional statements (if/else if/else)
+* Implement scoping for declarations (eg. global, function-level, etc.)
 * Parse function declarations
 * Parse function calls
 * Generic types
 * Varargs for functions
-* Add tests
-* 
+* Decide actual compiler or interpreter for MVP
+* Implement builtin optional<T>
+* Implement collection types
