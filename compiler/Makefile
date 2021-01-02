@@ -1,4 +1,4 @@
-.PHONY: all build_dirs clean debug release
+.PHONY: all build_dirs clean debug test
 
 all: debug
 
@@ -9,6 +9,10 @@ debug: build_dirs
 debug:
 	cd ./build && cmake ..
 	cd ./build && make
+
+test: debug
+test:
+	./build/test/wakitest -s
 
 clean:
 	rm -rvf ./build/*

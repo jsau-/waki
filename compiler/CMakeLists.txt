@@ -6,10 +6,5 @@ set (CMAKE_CXX_STANDARD 11)
 
 add_compile_options(-pedantic-errors -Wall -Wextra -Werror)
 
-include_directories(include)
-
-set (waki_SOURCES)
-
-include(src/CMakeLists.txt)
-
-add_executable(waki ${waki_SOURCES})
+add_subdirectory(src)
+add_subdirectory(test)
