@@ -23,11 +23,11 @@ void IdentifierTable::assertIdentifierUndefined(std::string identifierName, uint
 }
 
 Identifier IdentifierTable::defineIdentifier(std::string identifierName, LexemeType lexemeType,
-                                             bool isMutable, bool isNullable, uint64_t line,
+                                             bool isMutable, uint64_t line,
                                              uint64_t column) {
   this->assertIdentifierUndefined(identifierName, line, column);
 
-  auto identifier = Identifier(identifierName, lexemeType, isMutable, isNullable, line, column);
+  auto identifier = Identifier(identifierName, lexemeType, isMutable, line, column);
 
   this->identifiers.emplace(identifierName, identifier);
 
@@ -60,12 +60,6 @@ bool IdentifierTable::isIdentifierMutable(std::string identifierName, uint64_t l
                                           uint64_t column) const {
   auto identifier = this->getIdentifierForName(identifierName, line, column);
   return identifier.isMutable;
-}
-
-bool IdentifierTable::isIdentifierNullable(std::string identifierName, uint64_t line,
-                                           uint64_t column) const {
-  auto identifier = this->getIdentifierForName(identifierName, line, column);
-  return identifier.isNullable;
 }
 
 void IdentifierTable::setIdentifierType(std::string identifierName, LexemeType type, uint64_t line,

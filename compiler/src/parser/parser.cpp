@@ -11,7 +11,6 @@
 #include "expressions/double_literal_expression.h"
 #include "expressions/float_literal_expression.h"
 #include "expressions/identifier_expression.h"
-#include "expressions/null_literal_expression.h"
 #include "expressions/signed_int_32_literal_expression.h"
 #include "expressions/string_literal_expression.h"
 #include "parser_error.h"
@@ -352,10 +351,6 @@ std::shared_ptr<Expression> Parser::parsePrimaryExpression() {
     literalExpression = std::make_shared<FloatLiteralExpression>(
       curToken.lineNumber, curToken.columnNumber, std::stof(curToken.value));
     break;
-  case LexemeType::NULL_LITERAL:
-    literalExpression =
-      std::make_shared<NullLiteralExpression>(curToken.lineNumber, curToken.columnNumber);
-    break;
   case LexemeType::SIGNED_INTEGER_32_LITERAL:
     literalExpression = std::make_shared<SignedInt32LiteralExpression>(
       curToken.lineNumber, curToken.columnNumber, std::stoi(curToken.value));
@@ -404,28 +399,23 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
   auto variableModifiers = Lexemes::getInstance().getVariableModifiers();
   auto dataType = LexemeType::UNKNOWN;
   auto isMutable = false;
-  auto isNullable = false;
 
   Token firstToken = this->currentToken();
 
   /*
    * TODO: This technically will allow nonsense like
-   * `nullable nullable mutable mutable nullable int foo`, but I don't
+   * `mutable mutable int foo`, but I don't
    * particularly see any value in throwing a compiler error if people decide
    * to be excessive.
    *
    * Probably a sensible place to emit a warning though, eg. count mutables and
-   * nullables, if either >= 1 emit a warning.
+   * if >= 1 emit a warning.
    */
   while (this->checkCurrentTokenType(variableModifiers)) {
     auto variableModifier = this->advance();
 
     if (variableModifier.type == LexemeType::MUTABLE) {
       isMutable = true;
-    }
-
-    if (variableModifier.type == LexemeType::NULLABLE) {
-      isNullable = true;
     }
   }
 
@@ -445,7 +435,7 @@ std::shared_ptr<Statement> Parser::parseVariableAssignmentStatement() {
 
   return std::make_shared<VariableAssignmentStatement>(
     firstToken.lineNumber, firstToken.columnNumber, dataType, identifier.value, operatorToken.type,
-    expression, isMutable, isNullable);
+    expression, isMutable);
 }
 
 std::shared_ptr<Statement> Parser::parseConditionalStatement() {

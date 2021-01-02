@@ -1,6 +1,6 @@
 # Immutability
 
-Unless explicitly instructed at declaration, variables should be immutable to
+Unless explicitly instructed at declaration, variables will be immutable to
 prevent modification. This includes variables declared in global or
 function-level scope, as well as members of `struct`s.
 

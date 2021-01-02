@@ -10,7 +10,6 @@
 #include "../parser/expressions/double_literal_expression.h"
 #include "../parser/expressions/float_literal_expression.h"
 #include "../parser/expressions/identifier_expression.h"
-#include "../parser/expressions/null_literal_expression.h"
 #include "../parser/expressions/signed_int_32_literal_expression.h"
 #include "../parser/expressions/string_literal_expression.h"
 #include "../parser/statements/block_statement.h"
@@ -39,7 +38,6 @@ protected:
   virtual void visitDoubleLiteralExpression(DoubleLiteralExpression &node) override;
   virtual void visitFloatLiteralExpression(FloatLiteralExpression &node) override;
   virtual void visitIdentifierExpression(IdentifierExpression &node) override;
-  virtual void visitNullLiteralExpression() override;
   virtual void visitSignedInt32LiteralExpression(SignedInt32LiteralExpression &node) override;
   virtual void visitStringLiteralExpression(StringLiteralExpression &node) override;
 

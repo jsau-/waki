@@ -65,10 +65,6 @@ void Typechecker::visitIdentifierExpression(IdentifierExpression &node) {
   }
 }
 
-void Typechecker::visitNullLiteralExpression() {
-  this->latestVisitedType = LexemeType::NULL_LITERAL;
-}
-
 void Typechecker::visitSignedInt32LiteralExpression(SignedInt32LiteralExpression &) {
   this->latestVisitedType = LexemeType::SIGNED_INTEGER_32_LITERAL;
 }
@@ -96,7 +92,6 @@ void Typechecker::visitConditionalStatement(ConditionalStatement &node) {
   }
 }
 
-// TODO: Also check nullability of RHS - can't assign nullable int to int
 void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &node) {
   try {
     auto lexemeMetadata = Lexemes::getInstance().getMetadata();
@@ -108,9 +103,8 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
      * we've encountered it (and hence we'll treat it as a declaration)
      */
     if (node.isDeclaration() || !hasIdentifierBeenDefined) {
-      auto identifier =
-        this->identifierTable.defineIdentifier(node.identifier, node.dataType, node.isMutable,
-                                               node.isNullable, node.getLine(), node.getColumn());
+      auto identifier = this->identifierTable.defineIdentifier(
+        node.identifier, node.dataType, node.isMutable, node.getLine(), node.getColumn());
 
       /*
        * As part of a variable declaration, if no type were provided, eg. code
@@ -134,14 +128,6 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
         // TODO: Logic duplicated below
         auto inferredIdentifierType = *lexemeMetadataForExpressionType.dataTypes.begin();
 
-        auto areNullChecksViolated =
-          LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
-
-        if (areNullChecksViolated) {
-          this->errors.push_back(std::make_shared<TypeError>(
-            node.getLine(), node.getColumn(), inferredIdentifierType, expressionType));
-        }
-
         this->identifierTable.setIdentifierType(identifier.name, inferredIdentifierType,
                                                 node.getLine(), node.getColumn());
         /*
@@ -150,12 +136,7 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
          */
       } else {
         // TODO: Logic duplicated below
-        auto isExpressionUnassignable =
-          !lexemeMetadataForExpressionType.isAssignableToDataType(identifier.type);
-        auto areNullChecksViolated =
-          LexemeType::NULL_LITERAL == expressionType && !identifier.isNullable;
-
-        if (isExpressionUnassignable || areNullChecksViolated) {
+        if (!lexemeMetadataForExpressionType.isAssignableToDataType(identifier.type)) {
           this->errors.push_back(std::make_shared<TypeError>(node.getLine(), node.getColumn(),
                                                              identifier.type, expressionType));
         }
@@ -181,12 +162,7 @@ void Typechecker::visitVariableAssignmentStatement(VariableAssignmentStatement &
       auto expressionType = this->latestVisitedType;
       auto lexemeMetadataForExpression = lexemeMetadata.at(expressionType);
 
-      auto isExpressionUnassignable =
-        !lexemeMetadataForExpression.isAssignableToDataType(existingIdentifier.type);
-      auto areNullChecksViolated =
-        LexemeType::NULL_LITERAL == expressionType && !existingIdentifier.isNullable;
-
-      if (isExpressionUnassignable || areNullChecksViolated) {
+      if (!lexemeMetadataForExpression.isAssignableToDataType(existingIdentifier.type)) {
         this->errors.push_back(std::make_shared<TypeError>(
           node.getLine(), node.getColumn(), existingIdentifier.type, expressionType));
       }

@@ -4,10 +4,7 @@ Every primitive data-type will be default initialized to some sensible base
 value. This is to prevent having to explicitly define a base value for all
 variable declarations which are not null.
 
-In the case the variable is nullable, it will always be defaulted to null.
-
-In the case the variable is not nullable, the following table denotes the
-default values.
+Default initialization values can be found in the table below:
 
 | Data Type | Default Value | Description |
 | --- | --- | --- |

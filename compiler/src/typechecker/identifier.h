@@ -21,9 +21,6 @@ struct Identifier {
   // Is the identifier mutable?
   bool isMutable;
 
-  // Is the identifier nullable?
-  bool isNullable;
-
   // The line the identifier was declared at
   uint64_t lineDeclared;
 
@@ -31,9 +28,9 @@ struct Identifier {
   uint64_t columnDeclared;
 
   Identifier(std::string name = "", LexemeType type = LexemeType::UNKNOWN, bool isMutable = false,
-             bool isNullable = false, uint64_t lineDeclared = 0, uint64_t columnDeclared = 0)
-    : name(name), type(type), isMutable(isMutable), isNullable(isNullable),
-      lineDeclared(lineDeclared), columnDeclared(columnDeclared) {}
+             uint64_t lineDeclared = 0, uint64_t columnDeclared = 0)
+    : name(name), type(type), isMutable(isMutable), lineDeclared(lineDeclared),
+      columnDeclared(columnDeclared) {}
 
   bool operator==(const Identifier &rhs) const;
 };

@@ -41,13 +41,11 @@ enum class LexemeType {
    */
 
   MUTABLE,
-  NULLABLE,
 
   /*
    * Data type literal values
    */
 
-  NULL_LITERAL,
   FLOAT_LITERAL,
   DOUBLE_LITERAL,
   SIGNED_INTEGER_32_LITERAL,
@@ -63,7 +61,7 @@ enum class LexemeType {
   RETURN,
   NAMESPACE,
   IMPORT,
-  IF, 
+  IF,
   ELSE,
 
   /*
@@ -83,7 +81,6 @@ enum class LexemeType {
   GREATER_THAN_OR_EQUAL,
   LESS_THAN,
   GREATER_THAN,
-  NULL_COALESCE,
   TERNARY,
   TERNARY_FALLBACK,
   MULTIPLY_ASSIGN,

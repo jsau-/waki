@@ -52,22 +52,11 @@ Lexemes::Lexemes() {
      LexemeMetadata("mutable modifier", std::regex("mutable"), "mutable",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_VARIABLE_MODIFIER |
                       LEXEMEFLAG_RESERVED_KEYWORD)},
-    {LexemeType::NULLABLE,
-     LexemeMetadata("nullable modifier", std::regex("nullable"), "nullable",
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_VARIABLE_MODIFIER |
-                      LEXEMEFLAG_RESERVED_KEYWORD)},
 
     /*
      * Literal types
      */
 
-    {LexemeType::NULL_LITERAL,
-     LexemeMetadata(
-       "null literal", std::regex("null"), "null",
-       LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_RESERVED_KEYWORD | LEXEMEFLAG_LITERAL,
-       tl::nullopt,
-       {LexemeType::SIGNED_INTEGER_32, LexemeType::FLOAT, LexemeType::DOUBLE, LexemeType::BOOLEAN,
-        LexemeType::STRING})},
     {LexemeType::FLOAT_LITERAL,
      LexemeMetadata("floating point literal", std::regex("[+-]?([0-9]*[.])?[0-9]+f"), tl::nullopt,
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_LITERAL, tl::nullopt,
@@ -161,9 +150,6 @@ Lexemes::Lexemes() {
     {LexemeType::GREATER_THAN,
      LexemeMetadata("greater than", std::regex(">"), ">",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},
-    {LexemeType::NULL_COALESCE,
-     LexemeMetadata("null coalesce", std::regex("\\?\\?"), "??",
-                    LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_UNARY_OPERATOR)},
     {LexemeType::TERNARY,
      LexemeMetadata("ternary", std::regex("\\?"), "?",
                     LEXEMEFLAG_SIGNIFICANT_TO_TOKENIZE | LEXEMEFLAG_BINARY_OPERATOR)},

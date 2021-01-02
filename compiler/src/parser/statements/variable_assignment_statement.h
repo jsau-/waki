@@ -25,15 +25,13 @@ struct VariableAssignmentStatement : Statement {
   LexemeType assignmentOperator;
   std::shared_ptr<Expression> expression;
   bool isMutable;
-  bool isNullable;
 
   VariableAssignmentStatement(uint64_t line, uint64_t column, LexemeType dataType,
                               std::string identifier, LexemeType assignmentOperator,
-                              std::shared_ptr<Expression> expression, bool isMutable = false,
-                              bool isNullable = false)
+                              std::shared_ptr<Expression> expression, bool isMutable = false)
     : Statement(line, column), dataType(dataType),
       identifier(identifier), assignmentOperator(assignmentOperator), expression(expression),
-      isMutable(isMutable), isNullable(isNullable) {
+      isMutable(isMutable) {
     auto lexemes = Lexemes::getInstance();
     auto assignmentOperators = lexemes.getAssignmentOperators();
     auto dataTypes = lexemes.getDataTypes();
@@ -61,7 +59,7 @@ struct VariableAssignmentStatement : Statement {
    * type, or a modifier word was provided.
    */
   bool isDeclaration() {
-    return this->isMutable || this->isNullable || this->dataType != LexemeType::UNKNOWN;
+    return this->isMutable || this->dataType != LexemeType::UNKNOWN;
   }
 };
 
