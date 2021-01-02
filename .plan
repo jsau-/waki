@@ -1,2 +1,7 @@
+* Conditional statements (if/else)
 * Parse function declarations
 * Parse function calls
+* Generic types
+* Varargs for functions
+* Add tests
+* 
