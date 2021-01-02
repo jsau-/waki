@@ -80,9 +80,12 @@ Token Tokenizer::nextMatch() {
         }
       }
 
+      auto tokenLine = this->line;
+      auto tokenColumn = this->column;
+
       this->eatChars(tokenValue.length());
 
-      return Token(tokenType, tokenValue, this->line, this->column);
+      return Token(tokenType, tokenValue, tokenLine, tokenColumn);
     }
   }
 

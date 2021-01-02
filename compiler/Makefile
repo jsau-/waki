@@ -12,7 +12,7 @@ debug:
 
 test: debug
 test:
-	./build/test/wakitest -s
+	./build/test/wakitest -d yes
 
 clean:
 	rm -rvf ./build/*

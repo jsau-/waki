@@ -21,6 +21,9 @@ struct Token {
     : type(type), value(value), lineNumber(lineNumber), columnNumber(columnNumber) {}
 
   Token() : Token(LexemeType::UNKNOWN, "", 0, 0) {}
+
+  bool operator==(const Token &rhs) const;
+  bool operator!=(const Token &rhs) const;
 };
 
 #endif
