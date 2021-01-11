@@ -17,8 +17,7 @@
 #include "statements/conditional_statement.h"
 #include "statements/variable_assignment_statement.h"
 
-Parser::Parser(std::string sourceText, std::vector<Token> tokens) {
-  this->sourceText = sourceText;
+Parser::Parser(std::vector<Token> tokens) {
   this->tokens = tokens;
   this->index = 0;
 }

@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 
   spdlog::trace("Instantiating parser.");
 
-  auto parser = Parser(inFile, tokens);
+  auto parser = Parser(tokens);
 
   spdlog::trace("Parsing tokens.");
 

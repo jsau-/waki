@@ -11,12 +11,11 @@
 #include "statements/statement.h"
 
 struct Parser {
-  Parser(std::string sourceText, std::vector<Token> tokens);
+  Parser(std::vector<Token> tokens);
 
   std::shared_ptr<BlockStatement> parse();
 
 private:
-  std::string sourceText;
   std::vector<Token> tokens;
   size_t index;
 

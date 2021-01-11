@@ -9,6 +9,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/../src/parser/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/../src/tokenizer/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/../src/typechecker/CMakeLists.txt)
 
+include(${CMAKE_CURRENT_LIST_DIR}/parser/CMakeLists.txt)
 include(${CMAKE_CURRENT_LIST_DIR}/tokenizer/CMakeLists.txt)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../include)
