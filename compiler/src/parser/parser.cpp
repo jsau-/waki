@@ -442,30 +442,34 @@ std::shared_ptr<Statement> Parser::parseConditionalStatement() {
   this->assertCurrentTokenTypeAndAdvance(LexemeType::OPEN_PARENTHESIS);
   auto ifExpression = this->parseExpression();
   this->assertCurrentTokenTypeAndAdvance(LexemeType::CLOSE_PARENTHESIS);
+  
+  auto ifBlock = this->parseBracedBlockStatement();
+
+  return std::make_shared<ConditionalStatement>(
+    ifToken.lineNumber, ifToken.columnNumber,
+    std::tuple<std::shared_ptr<Expression>, std::shared_ptr<BlockStatement>>(ifExpression,
+                                                                             ifBlock));
+}
+
+std::shared_ptr<BlockStatement> Parser::parseBracedBlockStatement() {
   this->assertCurrentTokenTypeAndAdvance(LexemeType::OPEN_BRACE);
 
   auto currentToken = this->currentToken();
 
-  auto ifBlock =
-    std::make_shared<BlockStatement>(currentToken.lineNumber, currentToken.columnNumber);
+  auto block = std::make_shared<BlockStatement>(currentToken.lineNumber, currentToken.columnNumber);
 
   while (!this->checkCurrentTokenType(LexemeType::CLOSE_BRACE)) {
     auto nextStatement = this->parseStatement();
 
     // TODO: Warning if no value?
     if (nextStatement.has_value()) {
-      ifBlock->statements.push_back(*nextStatement);
+      block->statements.push_back(*nextStatement);
     }
   }
 
   this->assertCurrentTokenTypeAndAdvance(LexemeType::CLOSE_BRACE);
 
-  this->assertCurrentTokenTypeAndAdvance(LexemeType::END_OF_STATEMENT);
-
-  return std::make_shared<ConditionalStatement>(
-    ifToken.lineNumber, ifToken.columnNumber,
-    std::tuple<std::shared_ptr<Expression>, std::shared_ptr<BlockStatement>>(ifExpression,
-                                                                             ifBlock));
+  return block;
 }
 
 bool Parser::isAtEnd() const { return this->index >= this->tokens.size(); }

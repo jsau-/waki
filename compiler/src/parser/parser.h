@@ -122,6 +122,8 @@ private:
   std::shared_ptr<Expression> parseMultiplicativeExpression();
   std::shared_ptr<Expression> parsePrimaryExpression();
 
+  std::shared_ptr<BlockStatement> parseBracedBlockStatement();
+
   tl::optional<std::shared_ptr<Statement>> parseStatement();
   std::shared_ptr<Statement> parseVariableAssignmentStatement();
   std::shared_ptr<Statement> parseConditionalStatement();
